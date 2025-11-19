@@ -1,42 +1,97 @@
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --primary-color: #7c3aed;
+  --primary-dark: #5b21b6;
+  --secondary-color: #db2777;
+  --accent-color: #f472b6;
+  --text-color: #e2e8f0;
+  --light-text: #94a3b8;
+  --background: #0f172a;
+  --section-bg: #1e293b;
+  --card-bg: #1e293b;
+  --gradient-start: #7c3aed;
+  --gradient-end: #db2777;
+  --nav-bg: rgba(15, 23, 42, 0.8);
+  --card-border: rgba(148, 163, 184, 0.1);
+}
+
+body {
+  line-height: 1.6;
+  color: var(--text-color);
+  background: var(--background);
+}
+
+.app {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+  width: 100%;
+  min-height: 100vh;
+}
+
+.app.loaded {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem 5%;
+  background: var(--nav-bg);
+  backdrop-filter: blur(10px);
+  z-index: 1000;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+  border-bottom: 1px solid var(--card-border);
 }
 
 .logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--accent-color);
+  text-shadow: 0 0 10px rgba(244, 114, 182, 0.3);
 }
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.nav-links {
+  display: flex;
+  gap: 2rem;
+  list-style: none;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
+.nav-links a {
+  text-decoration: none;
+  color: val(--text-color);
+  font-weight: 500;
+  transition: all 0.3 ease;
+  position: relative;
+  cursor: pointer;
 }
 
-.card {
-  padding: 2em;
+.nav-links a::after {
+  content: "";
+  position: absolute;
+  bottom: -5px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: var(--accent-color);
+  transition: width 0.3s ease;
 }
 
-.read-the-docs {
-  color: #888;
+.nav-links a:hover {
+  color: var(--accent-color);
+}
+
+.nav-links a:hover::after {
+  width: 100%;
 }
