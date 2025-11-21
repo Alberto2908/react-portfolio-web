@@ -1,4 +1,6 @@
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
+import { getExperiencias } from "../services/ExperienciaService";
 
 const fadeInUp = {
   initial: { opacity: 0, y: 20 },
@@ -14,32 +16,76 @@ const staggerContainer = {
   },
 };
 
-const experiences = [
-  {
-    id: "1",
-    empresa: "Ejemplo",
-    puesto: "Ejemplo",
-    descripcion:
-      "Ejemplo.",
-    mesInicio: "Enero",
-    anoInicio: 2022,
-    trabajoActivo: true,
-    mesFin: null,
-  },
-  {
-    id: "2",
-    empresa: "Ejemplo",
-    puesto: "Ejemplo",
-    descripcion:
-      "Ejemplo.",
-    mesInicio: "Enero",
-    anoInicio: 2020,
-    trabajoActivo: false,
-    mesFin: "Diciembre 2022",
-  }
-];
+const sortExperiences = (items) => {
+  const monthOrder = [
+    "Enero",
+    "Febrero",
+    "Marzo",
+    "Abril",
+    "Mayo",
+    "Junio",
+    "Julio",
+    "Agosto",
+    "Septiembre",
+    "Octubre",
+    "Noviembre",
+    "Diciembre",
+  ];
+
+  const getMonthIndex = (month) => {
+    const index = monthOrder.indexOf(month);
+    return index === -1 ? 0 : index;
+  };
+
+  return [...items].sort((a, b) => {
+    const aEndYear =
+      a.trabajoActivo || !a.anoFin ? a.anoInicio ?? 0 : a.anoFin;
+    const bEndYear =
+      b.trabajoActivo || !b.anoFin ? b.anoInicio ?? 0 : b.anoFin;
+
+    if (aEndYear !== bEndYear) {
+      return bEndYear - aEndYear;
+    }
+
+    const aEndMonth =
+      a.trabajoActivo || !a.mesFin
+        ? getMonthIndex(a.mesInicio)
+        : getMonthIndex(a.mesFin);
+    const bEndMonth =
+      b.trabajoActivo || !b.mesFin
+        ? getMonthIndex(b.mesInicio)
+        : getMonthIndex(b.mesFin);
+
+    if (aEndMonth !== bEndMonth) {
+      return bEndMonth - aEndMonth;
+    }
+
+    if (a.anoInicio !== b.anoInicio) {
+      return (b.anoInicio ?? 0) - (a.anoInicio ?? 0);
+    }
+
+    return getMonthIndex(b.mesInicio) - getMonthIndex(a.mesInicio);
+  });
+};
 
 export const Experiencia = () => {
+  const [experiences, setExperiences] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    getExperiencias()
+      .then((data) => {
+        const sorted = sortExperiences(data || []);
+        setExperiences(sorted);
+      })
+      .catch((err) => {
+        console.error("Error cargando experiencias", err);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }, []);
+
   return (
     <motion.section
       id="experiencia"
@@ -84,9 +130,8 @@ export const Experiencia = () => {
               </div>
               <span className="experience-company">{exp.empresa}</span>
               <span className="experience-dates">
-                {exp.mesInicio} {exp.anoInicio} -
-                {" "}
-                {exp.trabajoActivo ? "Actualidad" : exp.mesFin}
+                {exp.mesInicio} {exp.anoInicio} -{" "}
+                {exp.trabajoActivo ? "Actualidad" : `${exp.mesFin} ${exp.anoFin}`}
               </span>
             </div>
             <p className="experience-description">{exp.descripcion}</p>
