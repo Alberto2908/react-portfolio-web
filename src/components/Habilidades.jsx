@@ -1,4 +1,6 @@
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
+import { getHabilidades } from "../services/HabilidadService";
 
 const fadeInUp = {
   initial: { opacity: 0, y: 20 },
@@ -14,57 +16,60 @@ const staggerContainer = {
   },
 };
 
-const skills = [
-  {
-    id: "1",
-    name: "Java",
-    image: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/java/java-original.svg",
-    category: "Backend",
-  },
-  {
-    id: "2",
-    name: "Spring Boot",
-    image:
-      "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/spring/spring-original.svg",
-    category: "Backend",
-  },
-  {
-    id: "3",
-    name: "React",
-    image:
-      "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg",
-    category: "Frontend",
-  },
-  {
-    id: "4",
-    name: "JavaScript",
-    image:
-      "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/javascript/javascript-original.svg",
-    category: "Frontend",
-  },
-  {
-    id: "5",
-    name: "MongoDB",
-    image:
-      "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mongodb/mongodb-original.svg",
-    category: "Base de datos",
-  },
-  {
-    id: "6",
-    name: "Git",
-    image: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/git/git-original.svg",
-    category: "Herramientas",
-  },
-];
+const BACKEND_BASE_URL = "http://localhost:8080";
+
+const CATEGORY_ORDER = ["frontend", "backend", "database", "tools", "other"];
+
+const CATEGORY_LABELS = {
+  frontend: "Frontend",
+  backend: "Backend",
+  database: "Base de datos",
+  tools: "Herramientas",
+  other: "Otros",
+};
+
+const getSkillImageSrc = (image) => {
+  if (!image) return "/skills/default.png";
+  if (image.startsWith("http")) return image;
+  if (image.startsWith("/uploads")) return `${BACKEND_BASE_URL}${image}`;
+  return image;
+};
+
+const handleSkillImageError = (event) => {
+  event.currentTarget.src = "/skills/default.png";
+};
 
 export const Habilidades = () => {
-  const categories = skills.reduce((acc, skill) => {
-    if (!acc[skill.category]) acc[skill.category] = [];
-    acc[skill.category].push(skill);
-    return acc;
-  }, /** @type {Record<string, typeof skills>} */ ({}));
+  const [skills, setSkills] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const categoryEntries = Object.entries(categories);
+  useEffect(() => {
+    getHabilidades()
+      .then((data) => {
+        setSkills(data || []);
+      })
+      .catch((err) => {
+        console.error("Error cargando habilidades", err);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }, []);
+
+  const categoryMap = new Map();
+  CATEGORY_ORDER.forEach((c) => categoryMap.set(c, []));
+
+  skills.forEach((skill) => {
+    const raw = (skill.category || "other").toString().toLowerCase();
+    const key = CATEGORY_ORDER.includes(raw) ? raw : "other";
+    const arr = categoryMap.get(key) || [];
+    arr.push(skill);
+    categoryMap.set(key, arr);
+  });
+
+  const categoryEntries = CATEGORY_ORDER
+    .map((key) => [key, categoryMap.get(key) || []])
+    .filter(([, items]) => items.length > 0);
 
   return (
     <motion.section
@@ -91,14 +96,26 @@ export const Habilidades = () => {
         whileInView="animate"
         viewport={{ once: true }}
       >
-        {categoryEntries.map(([categoryName, categorySkills]) => (
+        {loading && skills.length === 0 ? (
+          <p
+            style={{
+              textAlign: "center",
+              color: "var(--light-text)",
+              marginBottom: "1rem",
+            }}
+          >
+            Cargando habilidades...
+          </p>
+        ) : null}
+
+        {categoryEntries.map(([categoryKey, categorySkills]) => (
           <motion.div
-            key={categoryName}
+            key={categoryKey}
             className="skills-column"
             variants={fadeInUp}
           >
             <div className="skills-column-header">
-              <h3>{categoryName}</h3>
+              <h3>{CATEGORY_LABELS[categoryKey] || categoryKey}</h3>
               <span className="skills-count">{categorySkills.length}</span>
             </div>
             <div className="skills-list">
@@ -110,7 +127,11 @@ export const Habilidades = () => {
                   whileHover={{ x: 4, transition: { duration: 0.15 } }}
                 >
                   <div className="skill-row-icon">
-                    <img src={skill.image} alt={skill.name} />
+                    <img
+                      src={getSkillImageSrc(skill.image)}
+                      alt={skill.name}
+                      onError={handleSkillImageError}
+                    />
                   </div>
                   <span className="skill-row-name">{skill.name}</span>
                 </motion.div>

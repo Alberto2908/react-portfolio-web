@@ -376,7 +376,7 @@ body {
   width: 22px;
   height: 22px;
   border-radius: 999px;
-  background: rgba(15, 23, 42, 0.9);
+  background: transparent;
   display: flex;
   align-items: center;
   justify-content: center;
