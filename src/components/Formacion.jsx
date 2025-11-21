@@ -1,4 +1,6 @@
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
+import { getFormaciones } from "../services/FormacionService";
 
 const fadeInUp = {
   initial: { opacity: 0, y: 20 },
@@ -14,50 +16,76 @@ const staggerContainer = {
   },
 };
 
-const studies = [
-  {
-    id: "1",
-    nombre: "Grado en Ingeniería Informática",
-    centro: "Universidad de Ejemplo",
-    mesInicio: "Septiembre",
-    anoInicio: 2018,
-    cursandoAhora: true,
-    mesFin: null,
-    anoFin: null,
-  },
-  {
-    id: "2",
-    nombre: "Bootcamp de Desarrollo Full Stack",
-    centro: "Academia Online",
-    mesInicio: "Enero",
-    anoInicio: 2023,
-    cursandoAhora: false,
-    mesFin: "Junio",
-    anoFin: 2023,
-  },
-  {
-    id: "3",
-    nombre: "Bootcamp de Desarrollo Full Stack",
-    centro: "Academia Online",
-    mesInicio: "Enero",
-    anoInicio: 2023,
-    cursandoAhora: false,
-    mesFin: "Junio",
-    anoFin: 2023,
-  },
-  {
-    id: "4",
-    nombre: "Bootcamp de Desarrollo Full Stack",
-    centro: "Academia Online",
-    mesInicio: "Enero",
-    anoInicio: 2023,
-    cursandoAhora: false,
-    mesFin: "Junio",
-    anoFin: 2023,
-  },
-];
+const sortFormaciones = (items) => {
+  const monthOrder = [
+    "Enero",
+    "Febrero",
+    "Marzo",
+    "Abril",
+    "Mayo",
+    "Junio",
+    "Julio",
+    "Agosto",
+    "Septiembre",
+    "Octubre",
+    "Noviembre",
+    "Diciembre",
+  ];
+
+  const getMonthIndex = (month) => {
+    const index = monthOrder.indexOf(month);
+    return index === -1 ? 0 : index;
+  };
+
+  return [...items].sort((a, b) => {
+    const aEndYear =
+      a.cursandoAhora || !a.anoFin ? a.anoInicio ?? 0 : a.anoFin;
+    const bEndYear =
+      b.cursandoAhora || !b.anoFin ? b.anoInicio ?? 0 : b.anoFin;
+
+    if (aEndYear !== bEndYear) {
+      return bEndYear - aEndYear;
+    }
+
+    const aEndMonth =
+      a.cursandoAhora || !a.mesFin
+        ? getMonthIndex(a.mesInicio)
+        : getMonthIndex(a.mesFin);
+    const bEndMonth =
+      b.cursandoAhora || !b.mesFin
+        ? getMonthIndex(b.mesInicio)
+        : getMonthIndex(b.mesFin);
+
+    if (aEndMonth !== bEndMonth) {
+      return bEndMonth - aEndMonth;
+    }
+
+    if (a.anoInicio !== b.anoInicio) {
+      return (b.anoInicio ?? 0) - (a.anoInicio ?? 0);
+    }
+
+    return getMonthIndex(b.mesInicio) - getMonthIndex(a.mesInicio);
+  });
+};
 
 export const Formacion = () => {
+  const [studies, setStudies] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    getFormaciones()
+      .then((data) => {
+        const sorted = sortFormaciones(data || []);
+        setStudies(sorted);
+      })
+      .catch((err) => {
+        console.error("Error cargando formación", err);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }, []);
+
   return (
     <motion.section
       id="formacion"
@@ -83,6 +111,18 @@ export const Formacion = () => {
         whileInView="animate"
         viewport={{ once: true }}
       >
+        {loading && studies.length === 0 ? (
+          <p
+            style={{
+              textAlign: "center",
+              color: "var(--light-text)",
+              marginBottom: "1rem",
+            }}
+          >
+            Cargando formación...
+          </p>
+        ) : null}
+
         {studies.map((study, index) => (
           <motion.div
             key={study.id}
