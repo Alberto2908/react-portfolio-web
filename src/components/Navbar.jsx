@@ -1,4 +1,5 @@
-import { animate, motion } from "framer-motion";
+import { useState } from "react";
+import { motion } from "framer-motion";
 
 const fadeInUp = {
   initial: { opacity: 0, y: 20 },
@@ -15,6 +16,21 @@ const staggerContainer = {
 };
 
 export const Navbar = () => {
+  const [isOpen, setIsOpen] = useState(false);
+
+  const links = [
+    { href: "#home", label: "Home" },
+    { href: "#proyectos", label: "Proyectos" },
+    { href: "#experiencia", label: "Experiencia" },
+    { href: "#formacion", label: "Formación" },
+    { href: "#habilidades", label: "Habilidades" },
+    { href: "#contacto", label: "Contacto" },
+  ];
+
+  const handleLinkClick = () => {
+    setIsOpen(false);
+  };
+
   return (
     <motion.nav
       className="navbar"
@@ -31,54 +47,60 @@ export const Navbar = () => {
       </motion.div>
 
       <motion.ul
-        className="nav-links"
+        className="nav-links nav-links-desktop"
         variants={staggerContainer}
         initial="initial"
         animate="animate"
       >
-        <motion.li
-          variants={fadeInUp}
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.95 }}
-        >
-          <a href="#home">Home</a>
-        </motion.li>
-        <motion.li
-          variants={fadeInUp}
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.95 }}
-        >
-          <a href="#proyectos">Proyectos</a>
-        </motion.li>
-        <motion.li
-          variants={fadeInUp}
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.95 }}
-        >
-          <a href="#experiencia">Experiencia</a>
-        </motion.li>
-        <motion.li
-          variants={fadeInUp}
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.95 }}
-        >
-          <a href="#formacion">Formación</a>
-        </motion.li>
-        <motion.li
-          variants={fadeInUp}
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.95 }}
-        >
-          <a href="#habilidades">Habilidades</a>
-        </motion.li>
-        <motion.li
-          variants={fadeInUp}
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.95 }}
-        >
-          <a href="#contacto">Contacto</a>
-        </motion.li>
+        {links.map((link) => (
+          <motion.li
+            key={link.href}
+            variants={fadeInUp}
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            <a href={link.href}>{link.label}</a>
+          </motion.li>
+        ))}
       </motion.ul>
+
+      <motion.button
+        className={`nav-toggle ${isOpen ? "open" : ""}`}
+        whileTap={{ scale: 0.9 }}
+        aria-label="Abrir menú de navegación"
+        onClick={() => setIsOpen((prev) => !prev)}
+      >
+        <span></span>
+        <span></span>
+        <span></span>
+      </motion.button>
+
+      <motion.div
+        className="nav-mobile"
+        initial={false}
+        animate={isOpen ? { opacity: 1, y: 0 } : { opacity: 0, y: -10 }}
+        transition={{ duration: 0.25 }}
+        style={{ pointerEvents: isOpen ? "auto" : "none" }}
+      >
+        <motion.ul
+          className="nav-mobile-list"
+          variants={staggerContainer}
+          initial="initial"
+          animate={isOpen ? "animate" : "initial"}
+        >
+          {links.map((link) => (
+            <motion.li
+              key={link.href}
+              variants={fadeInUp}
+              whileTap={{ scale: 0.97 }}
+            >
+              <a href={link.href} onClick={handleLinkClick}>
+                {link.label}
+              </a>
+            </motion.li>
+          ))}
+        </motion.ul>
+      </motion.div>
     </motion.nav>
   );
 };

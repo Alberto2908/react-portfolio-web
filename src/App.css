@@ -70,6 +70,14 @@ body {
   list-style: none;
 }
 
+.nav-toggle {
+  display: none;
+}
+
+.nav-mobile {
+  display: none;
+}
+
 .nav-links a {
   text-decoration: none;
   color: val(--text-color);
@@ -838,6 +846,108 @@ body {
 
 .submit-btn:hover::before {
   left: 100%;
+}
+
+/* Navbar responsive */
+@media (max-width: 900px) {
+  .nav-links-desktop {
+    display: none;
+  }
+
+  .nav-toggle {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 0.25rem;
+    width: 40px;
+    height: 40px;
+    border-radius: 999px;
+    border: 1px solid var(--card-border);
+    background: rgba(15, 23, 42, 0.9);
+    cursor: pointer;
+    align-items: center;
+    transition: border-color 0.2s ease, background 0.2s ease;
+  }
+
+  .nav-toggle span {
+    width: 18px;
+    height: 2px;
+    background: var(--text-color);
+    border-radius: 999px;
+    transition: transform 0.2s ease, opacity 0.2s ease;
+  }
+
+  .nav-toggle:hover {
+    border-color: var(--accent-color);
+    background: rgba(15, 23, 42, 1);
+  }
+
+  .nav-toggle.open span:nth-child(1) {
+    transform: translateY(6px) rotate(45deg);
+  }
+
+  .nav-toggle.open span:nth-child(2) {
+    opacity: 0;
+  }
+
+  .nav-toggle.open span:nth-child(3) {
+    transform: translateY(-6px) rotate(-45deg);
+  }
+
+  .nav-toggle.open {
+    border-color: var(--accent-color);
+  }
+
+  .nav-mobile {
+    display: block;
+    position: fixed;
+    top: 72px;
+    left: 5%;
+    right: 5%;
+    background: rgba(15, 23, 42, 0.98);
+    border-radius: 1rem;
+    border: 1px solid var(--card-border);
+    z-index: 900;
+    box-shadow: 0 12px 30px rgba(15, 23, 42, 0.8);
+  }
+
+  .nav-mobile-list {
+    list-style: none;
+    padding: 0.75rem 1.25rem 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .nav-mobile-list a {
+    position: relative;
+    display: block;
+    text-decoration: none;
+    color: var(--accent-color);
+    font-weight: 500;
+    padding: 0.4rem 0;
+    font-size: 0.95rem;
+    transition: color 0.2s ease;
+  }
+
+  .nav-mobile-list a:hover {
+    color: var(--accent-color);
+  }
+
+  .nav-mobile-list a::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 0;
+    height: 2px;
+    background: var(--accent-color);
+    transition: width 0.25s ease;
+  }
+
+  .nav-mobile-list a:hover::after {
+    width: 35%;
+  }
 }
 
 /* Hero responsive */
