@@ -20,7 +20,7 @@ export const Proyectos = () => {
       id="proyectos"
       className="projects"
       initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
+      whileInView={{ opacity: 1 }}
       viewport={{ once: true }}
       transition={{ duration: 0.6 }}
     >

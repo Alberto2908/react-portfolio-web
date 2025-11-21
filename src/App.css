@@ -297,6 +297,94 @@ body {
   margin-bottom: 3rem;
 }
 
+/* Habilidades */
+.skills {
+  padding: 6rem 5%;
+  background-color: var(--background);
+  position: relative;
+}
+
+.skills h2 {
+  text-align: center;
+  font-size: 2.5rem;
+  margin-bottom: 2.5rem;
+}
+
+.skills-grid {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 2rem;
+  align-items: stretch;
+}
+
+.skills-column {
+  min-width: 0;
+}
+
+.skills-column-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.skills-column-header h3 {
+  font-size: 1.1rem;
+}
+
+.skills-count {
+  font-size: 0.8rem;
+  color: var(--light-text);
+  padding: 0.1rem 0.5rem;
+  border-radius: 999px;
+  border: 1px solid rgba(148, 163, 184, 0.35);
+}
+
+.skills-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.skill-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.35rem 0.75rem;
+  border-radius: 999px;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  font-size: 0.9rem;
+}
+
+.skill-row:hover {
+  border-color: var(--accent-color);
+}
+
+.skill-row-icon {
+  width: 22px;
+  height: 22px;
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.skill-row-icon img {
+  width: 18px;
+  height: 18px;
+  object-fit: contain;
+}
+
+.skill-row-name {
+  white-space: nowrap;
+}
+
 .project-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -538,7 +626,7 @@ body {
   color: var(--light-text);
 }
 
-/* Formación / Education */
+/* Formación */
 .education {
   padding: 6rem 5%;
   background-color: var(--background);
@@ -588,7 +676,7 @@ body {
 }
 
 .education-item::before {
-  content: none; /* sin tramo extra, solo la línea central y el círculo */
+  content: none;
 }
 
 .education-content {
@@ -619,7 +707,6 @@ body {
   margin-bottom: 0.25rem;
 }
 
-/* Subrayado rosa bajo el nombre al hacer hover (igual que experiencia) */
 .education-header h3 {
   position: relative;
   display: inline-block;
@@ -651,78 +738,6 @@ body {
   font-size: 0.8rem;
   color: var(--light-text);
   margin-top: 0.15rem;
-}
-
-@media (max-width: 900px) {
-  .education {
-    padding: 4rem 1.5rem;
-  }
-
-  .education-timeline {
-    max-width: 100%;
-    margin: 0 auto;
-    padding: 0 1.5rem;
-    position: relative;
-  }
-
-  .education-timeline::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 1.5rem;
-    width: 2px;
-    background: rgba(244, 114, 182, 0.5);
-  }
-
-  .education-marker {
-    left: 1.5rem;
-    transform: translateX(-50%);
-  }
-
-  .education-content,
-  .education-item.right .education-content,
-  .education-item.left .education-content {
-    width: calc(100% - 3rem);
-    margin: 0 0 0 3rem;
-  }
-}
-
-/* Mobile timeline: línea y puntos visibles, cards a la derecha */
-@media (max-width: 600px) {
-  .education {
-    padding: 3rem 1.25rem;
-  }
-
-  .education-timeline {
-    max-width: 100%;
-    margin: 0 auto;
-    padding: 0;
-    position: relative;
-  }
-
-  .education-timeline::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 22px; /* posición fija de la línea en móvil */
-    width: 2px;
-    background: rgba(244, 114, 182, 0.5);
-  }
-
-  .education-marker {
-    left: 22px; /* misma x que la línea */
-    transform: translateX(-50%);
-    display: block;
-  }
-
-  .education-content,
-  .education-item.right .education-content,
-  .education-item.left .education-content {
-    width: calc(100% - 56px); /* 22px línea + ~6px radio + 28px espacio */
-    margin: 0 0 0 56px;
-  }
 }
 
 /* Contacto */
@@ -870,5 +885,93 @@ body {
 
   .experience-card {
     padding: 1.25rem 1.25rem;
+  }
+}
+
+/* Formacion responsive */
+@media (max-width: 900px) {
+  .education {
+    padding: 4rem 1.5rem;
+  }
+
+  .education-timeline {
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+    position: relative;
+  }
+
+  .education-timeline::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 1.5rem;
+    width: 2px;
+    background: rgba(244, 114, 182, 0.5);
+  }
+
+  .education-marker {
+    left: 1.5rem;
+    transform: translateX(-50%);
+  }
+
+  .education-content,
+  .education-item.right .education-content,
+  .education-item.left .education-content {
+    width: calc(100% - 3rem);
+    margin: 0 0 0 3rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .education {
+    padding: 3rem 1.25rem;
+  }
+
+  .education-timeline {
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 0;
+    position: relative;
+  }
+
+  .education-timeline::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 22px; /* posición fija de la línea en móvil */
+    width: 2px;
+    background: rgba(244, 114, 182, 0.5);
+  }
+
+  .education-marker {
+    left: 22px; /* misma x que la línea */
+    transform: translateX(-50%);
+    display: block;
+  }
+
+  .education-content,
+  .education-item.right .education-content,
+  .education-item.left .education-content {
+    width: calc(100% - 56px); /* 22px línea + ~6px radio + 28px espacio */
+    margin: 0 0 0 56px;
+  }
+}
+
+/* Habilidades responsive */
+@media (max-width: 600px) {
+  .skills {
+    padding: 4rem 1.5rem;
+  }
+  .skills-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (min-width: 601px) and (max-width: 1200px) {
+  .skills-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
