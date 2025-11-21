@@ -24,6 +24,7 @@ body {
   line-height: 1.6;
   color: var(--text-color);
   background: var(--background);
+  overflow-x: hidden;
 }
 
 .app {
@@ -535,6 +536,193 @@ body {
   margin-top: 0.75rem;
   font-size: 0.95rem;
   color: var(--light-text);
+}
+
+/* Formación / Education */
+.education {
+  padding: 6rem 5%;
+  background-color: var(--background);
+  position: relative;
+}
+
+.education h2 {
+  text-align: center;
+  font-size: 2.5rem;
+  margin-bottom: 3rem;
+}
+
+.education-timeline {
+  max-width: 1000px;
+  margin: 0 auto;
+  margin-top: 1rem;
+  position: relative;
+  padding: 0 2rem 0 2rem;
+}
+
+.education-item {
+  position: relative;
+  margin-bottom: 2.5rem;
+}
+
+.education-timeline::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 2px;
+  background: rgba(244, 114, 182, 0.4);
+}
+
+.education-marker {
+  position: absolute;
+  left: 50%;
+  top: 0.5rem;
+  width: 14px;
+  height: 14px;
+  border-radius: 999px;
+  border: 2px solid var(--accent-color);
+  background: var(--background);
+  box-shadow: 0 0 0 4px rgba(244, 114, 182, 0.25);
+  transform: translateX(-50%);
+}
+
+.education-item::before {
+  content: none; /* sin tramo extra, solo la línea central y el círculo */
+}
+
+.education-content {
+  background: var(--card-bg);
+  border-radius: 1rem;
+  padding: 1.25rem 1.5rem;
+  border: 1px solid var(--card-border);
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.25);
+  width: 45%;
+  max-width: 520px;
+}
+
+.education-item:hover .education-content {
+  border-color: var(--accent-color);
+}
+
+.education-item.right .education-content {
+  margin-left: 55%;
+}
+
+.education-item.left .education-content {
+  margin-right: 55%;
+  margin-left: 0;
+}
+
+.education-header h3 {
+  font-size: 1.1rem;
+  margin-bottom: 0.25rem;
+}
+
+/* Subrayado rosa bajo el nombre al hacer hover (igual que experiencia) */
+.education-header h3 {
+  position: relative;
+  display: inline-block;
+}
+
+.education-header h3::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0px;
+  width: 0;
+  height: 2px;
+  background: var(--accent-color);
+  transition: width 0.3s ease;
+}
+
+.education-item:hover .education-header h3::after {
+  width: 100%;
+}
+
+.education-center {
+  display: block;
+  font-size: 0.9rem;
+  color: var(--accent-color);
+}
+
+.education-dates {
+  display: block;
+  font-size: 0.8rem;
+  color: var(--light-text);
+  margin-top: 0.15rem;
+}
+
+@media (max-width: 900px) {
+  .education {
+    padding: 4rem 1.5rem;
+  }
+
+  .education-timeline {
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+    position: relative;
+  }
+
+  .education-timeline::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 1.5rem;
+    width: 2px;
+    background: rgba(244, 114, 182, 0.5);
+  }
+
+  .education-marker {
+    left: 1.5rem;
+    transform: translateX(-50%);
+  }
+
+  .education-content,
+  .education-item.right .education-content,
+  .education-item.left .education-content {
+    width: calc(100% - 3rem);
+    margin: 0 0 0 3rem;
+  }
+}
+
+/* Mobile timeline: línea y puntos visibles, cards a la derecha */
+@media (max-width: 600px) {
+  .education {
+    padding: 3rem 1.25rem;
+  }
+
+  .education-timeline {
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 0;
+    position: relative;
+  }
+
+  .education-timeline::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 22px; /* posición fija de la línea en móvil */
+    width: 2px;
+    background: rgba(244, 114, 182, 0.5);
+  }
+
+  .education-marker {
+    left: 22px; /* misma x que la línea */
+    transform: translateX(-50%);
+    display: block;
+  }
+
+  .education-content,
+  .education-item.right .education-content,
+  .education-item.left .education-content {
+    width: calc(100% - 56px); /* 22px línea + ~6px radio + 28px espacio */
+    margin: 0 0 0 56px;
+  }
 }
 
 /* Contacto */
