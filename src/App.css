@@ -64,6 +64,10 @@ body {
   text-shadow: 0 0 10px rgba(244, 114, 182, 0.3);
 }
 
+.navbar{
+  position: sticky;
+}
+
 .nav-links {
   display: flex;
   gap: 2rem;
@@ -799,6 +803,11 @@ body {
   background: var(--card-bg);
   color: var(--text-color);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.contact-form input:focus::placeholder,
+.contact-form textarea:focus::placeholder {
+  color: var(--accent-color);
 }
 
 .contact-form input:focus,
