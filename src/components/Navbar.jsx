@@ -76,7 +76,7 @@ export const Navbar = () => {
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.95 }}
         >
-          <a>Contacto</a>
+          <a href="#contacto">Contacto</a>
         </motion.li>
       </motion.ul>
     </motion.nav>
