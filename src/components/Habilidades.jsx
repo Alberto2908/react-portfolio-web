@@ -32,7 +32,8 @@ const getSkillImageSrc = (image) => {
   if (!image) return "/skills/default.png";
   if (image.startsWith("http")) return image;
   if (image.startsWith("/uploads")) return `${BACKEND_BASE_URL}${image}`;
-  return image;
+  const file = image.replace(/^habilidades\//, "");
+  return `${BACKEND_BASE_URL}/uploads/habilidades/${file}`;
 };
 
 const handleSkillImageError = (event) => {
