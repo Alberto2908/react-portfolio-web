@@ -481,6 +481,46 @@ body {
   color: var(--text-color);
 }
 
+.project-header {
+  position: relative;
+}
+
+.project-actions {
+  position: absolute;
+  top: 1.6rem;
+  right: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  z-index: 2;
+}
+
+.project-action-link {
+  color: var(--accent-color);
+  font-size: 1.1rem;
+  line-height: 1;
+}
+
+.project-action-btn {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  border: 1px solid var(--card-border);
+  background: rgba(15, 23, 42, 0.7);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.project-action-btn--edit {
+  color: var(--accent-color);
+}
+
+.project-action-btn--delete {
+  color: #f87171;
+}
+
 .project-card p {
   padding: 0 1.5rem 1rem;
   color: var(--light-text);
