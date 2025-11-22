@@ -29,9 +29,7 @@ function App() {
       <Habilidades />
       <Contacto />
 
-      <>
-        <Footer />
-      </>
+      <Footer />
     </div>
   );
 }
