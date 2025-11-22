@@ -5,6 +5,7 @@ import './index.css'
 import App from './App.jsx'
 import AdminExperienciaForm from './pages/AdminExperienciaForm.jsx'
 import AdminFormacionForm from './pages/AdminFormacionForm.jsx'
+import AdminHabilidadForm from './pages/AdminHabilidadForm.jsx'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
@@ -15,6 +16,8 @@ createRoot(document.getElementById('root')).render(
         <Route path="/admin/experiencia/:id" element={<AdminExperienciaForm />} />
         <Route path="/admin/formacion/nuevo" element={<AdminFormacionForm />} />
         <Route path="/admin/formacion/:id" element={<AdminFormacionForm />} />
+        <Route path="/admin/habilidad/nuevo" element={<AdminHabilidadForm />} />
+        <Route path="/admin/habilidad/:id" element={<AdminHabilidadForm />} />
       </Routes>
     </BrowserRouter>
   </StrictMode>,

@@ -311,7 +311,7 @@ body {
 
 /* Habilidades */
 .skills {
-  padding: 6rem 5%;
+  padding: 4rem 5%;
   background-color: var(--background);
   position: relative;
 }
@@ -746,7 +746,7 @@ body {
 
 /* Formación */
 .education {
-  padding: 4rem 5% 6rem;
+  padding: 4rem 5% 3rem;
   background-color: var(--background);
   position: relative;
 }
@@ -1144,7 +1144,7 @@ body {
 /* Formacion responsive */
 @media (max-width: 900px) {
   .education {
-    padding: 3rem 1.5rem 4.5rem;
+    padding: 3rem 1.5rem 3rem;
   }
 
   .education-timeline {
@@ -1179,7 +1179,7 @@ body {
 
 @media (max-width: 600px) {
   .education {
-    padding: 3rem 1.25rem 4.5rem;
+    padding: 3rem 1.25rem 3rem;
   }
 
   .education-timeline {
