@@ -298,7 +298,7 @@ body {
 
 /* Proyectos */
 .projects {
-  padding: 6rem 5%;
+  padding: 6rem 5% 3rem;
   background-color: var(--background);
   position: relative;
 }
@@ -513,7 +513,7 @@ body {
 .experience h2 {
   text-align: center;
   font-size: 2.5rem;
-  margin-bottom: 3rem;
+  margin-bottom: 4rem;
 }
 
 .experience-grid {
@@ -746,7 +746,7 @@ body {
 
 /* Formación */
 .education {
-  padding: 6rem 5%;
+  padding: 4rem 5% 6rem;
   background-color: var(--background);
   position: relative;
 }
@@ -754,7 +754,7 @@ body {
 .education h2 {
   text-align: center;
   font-size: 2.5rem;
-  margin-bottom: 3rem;
+  margin-bottom: 4rem;
 }
 
 .education-timeline {
@@ -1129,7 +1129,7 @@ body {
 
 @media (max-width: 600px) {
   .experience {
-    padding: 4rem 1.5rem;
+    padding: 3rem 1.5rem 4.5rem;
   }
 
   .experience-grid {
@@ -1144,7 +1144,7 @@ body {
 /* Formacion responsive */
 @media (max-width: 900px) {
   .education {
-    padding: 4rem 1.5rem;
+    padding: 3rem 1.5rem 4.5rem;
   }
 
   .education-timeline {
@@ -1179,7 +1179,7 @@ body {
 
 @media (max-width: 600px) {
   .education {
-    padding: 3rem 1.25rem;
+    padding: 3rem 1.25rem 4.5rem;
   }
 
   .education-timeline {

@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { getFormaciones } from "../services/FormacionService";
+import Swal from "sweetalert2";
+import { useNavigate } from "react-router-dom";
+import { getFormaciones, deleteFormacion } from "../services/FormacionService";
 
 const fadeInUp = {
   initial: { opacity: 0, y: 20 },
@@ -69,10 +71,26 @@ const sortFormaciones = (items) => {
 };
 
 export const Formacion = () => {
+  const navigate = useNavigate();
   const [studies, setStudies] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
+  const swal = Swal.mixin({
+    customClass: {
+      popup: "swal-portfolio-popup",
+      title: "swal-portfolio-title",
+      htmlContainer: "swal-portfolio-html",
+      actions: "swal-portfolio-actions",
+      confirmButton: "swal-portfolio-confirm",
+      cancelButton: "swal-portfolio-cancel",
+    },
+    buttonsStyling: false,
+    background: "var(--card-bg)",
+    color: "var(--text-color)",
+    iconColor: "var(--accent-color)",
+  });
+
+  const fetchFormaciones = () =>
     getFormaciones()
       .then((data) => {
         const sorted = sortFormaciones(data || []);
@@ -81,10 +99,34 @@ export const Formacion = () => {
       .catch((err) => {
         console.error("Error cargando formación", err);
       })
-      .finally(() => {
-        setLoading(false);
-      });
+      .finally(() => setLoading(false));
+
+  useEffect(() => {
+    fetchFormaciones();
   }, []);
+
+  const openCreateForm = () => navigate("/admin/formacion/nuevo");
+  const openEditForm = (st) => navigate(`/admin/formacion/${st.id}`);
+
+  const handleDelete = async (st) => {
+    const res = await swal.fire({
+      icon: "question",
+      title: "¿Eliminar formación?",
+      text: `${st.nombre} - ${st.centro}`,
+      showCancelButton: true,
+      confirmButtonText: "Eliminar",
+      cancelButtonText: "Cancelar",
+    });
+    if (res.isConfirmed) {
+      try {
+        await deleteFormacion(st.id);
+        setStudies((prev) => prev.filter((e) => e.id !== st.id));
+        await swal.fire({ icon: "success", title: "Eliminado" });
+      } catch {
+        await swal.fire({ icon: "error", title: "No se pudo eliminar" });
+      }
+    }
+  };
 
   return (
     <motion.section
@@ -95,14 +137,36 @@ export const Formacion = () => {
       viewport={{ once: true }}
       transition={{ duration: 0.6 }}
     >
-      <motion.h2
-        variants={fadeInUp}
-        initial="initial"
-        whileInView="animate"
-        viewport={{ once: true }}
-      >
-        Formación Académica
-      </motion.h2>
+      <div style={{ display: "flex", justifyContent: "center" }}>
+        <motion.div
+          variants={fadeInUp}
+          initial="initial"
+          whileInView="animate"
+          viewport={{ once: true }}
+          style={{ display: "inline-flex", alignItems: "center", gap: ".6rem", marginBottom: "5rem" }}
+        >
+          <motion.h2 style={{ margin: 0, textAlign: "center" }}>Formación Académica</motion.h2>
+          <button
+            onClick={openCreateForm}
+            aria-label="Añadir formación"
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              justifyContent: "center",
+              width: 36,
+              height: 36,
+              borderRadius: 999,
+              border: "1px solid var(--card-border)",
+              background: "rgba(15, 23, 42, 0.9)",
+              color: "var(--accent-color)",
+              cursor: "pointer",
+              lineHeight: 0,
+            }}
+          >
+            <i className="fa-solid fa-plus" style={{ transform: "translateY(1px)" }} />
+          </button>
+        </motion.div>
+      </div>
 
       <motion.div
         className="education-timeline"
@@ -135,7 +199,41 @@ export const Formacion = () => {
             <div className="education-marker" />
             <div className="education-content">
               <div className="education-header">
-                <h3>{study.nombre}</h3>
+                <div style={{ display: "flex", alignItems: "center", gap: ".4rem" }}>
+                  <h3 style={{ margin: 0 }}>{study.nombre}</h3>
+                  <div style={{ display: "flex", alignItems: "center", gap: ".4rem" }}>
+                    <button
+                      aria-label="Editar"
+                      onClick={() => openEditForm(study)}
+                      style={{
+                        width: 28,
+                        height: 28,
+                        borderRadius: 8,
+                        border: "1px solid var(--card-border)",
+                        background: "rgba(15,23,42,0.7)",
+                        color: "var(--accent-color)",
+                        cursor: "pointer",
+                      }}
+                    >
+                      <i className="fa-solid fa-pen" />
+                    </button>
+                    <button
+                      aria-label="Borrar"
+                      onClick={() => handleDelete(study)}
+                      style={{
+                        width: 28,
+                        height: 28,
+                        borderRadius: 8,
+                        border: "1px solid var(--card-border)",
+                        background: "rgba(15,23,42,0.7)",
+                        color: "#f87171",
+                        cursor: "pointer",
+                      }}
+                    >
+                      <i className="fa-solid fa-trash" />
+                    </button>
+                  </div>
+                </div>
                 <span className="education-center">{study.centro}</span>
                 <span className="education-dates">
                   {study.mesInicio} {study.anoInicio} -{" "}

@@ -162,9 +162,9 @@ export const Experiencia = () => {
           initial="initial"
           whileInView="animate"
           viewport={{ once: true }}
-          style={{ display: "inline-flex", alignItems: "center", gap: ".6rem" }}
+          style={{ display: "inline-flex", alignItems: "center", gap: ".6rem", marginBottom: "5rem" }}
         >
-          <motion.h2 style={{ textAlign: "center" }}>Experiencia Laboral</motion.h2>
+          <motion.h2 style={{ margin: 0, textAlign: "center" }}>Experiencia Laboral</motion.h2>
           <button
             onClick={openCreateForm}
             aria-label="Añadir experiencia"
@@ -179,9 +179,10 @@ export const Experiencia = () => {
               background: "rgba(15, 23, 42, 0.9)",
               color: "var(--accent-color)",
               cursor: "pointer",
+              lineHeight: 0,
             }}
           >
-            <i className="fa-solid fa-plus" />
+            <i className="fa-solid fa-plus" style={{ transform: "translateY(1px)" }} />
           </button>
         </motion.div>
       </div>
