@@ -1122,3 +1122,51 @@ body {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
+
+/* SweetAlert2 themed to match portfolio */
+.swal-portfolio-popup {
+  background: var(--card-bg) !important;
+  color: var(--text-color) !important;
+  border: 1px solid var(--card-border);
+  border-radius: 14px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
+}
+
+.swal-portfolio-title {
+  color: var(--text-color) !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.2px;
+}
+
+.swal-portfolio-html {
+  color: var(--light-text) !important;
+}
+
+.swal-portfolio-actions {
+  gap: 0.5rem;
+}
+
+.swal-portfolio-confirm {
+  background: var(--primary-color) !important;
+  color: #ffffff !important;
+  border: none !important;
+  border-radius: 0.6rem !important;
+  padding: 0.6rem 1.1rem !important;
+  font-weight: 600 !important;
+  box-shadow: 0 6px 16px rgba(124, 58, 237, 0.35) !important;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.swal-portfolio-confirm:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 20px rgba(124, 58, 237, 0.45) !important;
+}
+
+.swal-portfolio-cancel {
+  background: transparent !important;
+  color: var(--accent-color) !important;
+  border: 1px solid rgba(244, 114, 182, 0.35) !important;
+  border-radius: 0.6rem !important;
+  padding: 0.6rem 1.1rem !important;
+  font-weight: 600 !important;
+}
