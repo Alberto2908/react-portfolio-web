@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { getExperiencias } from "../services/ExperienciaService";
+import Swal from "sweetalert2";
+import { useNavigate } from "react-router-dom";
+import { getExperiencias, deleteExperiencia } from "../services/ExperienciaService";
 
 const fadeInUp = {
   initial: { opacity: 0, y: 20 },
@@ -15,6 +17,21 @@ const staggerContainer = {
     },
   },
 };
+
+const MONTHS = [
+  "Enero",
+  "Febrero",
+  "Marzo",
+  "Abril",
+  "Mayo",
+  "Junio",
+  "Julio",
+  "Agosto",
+  "Septiembre",
+  "Octubre",
+  "Noviembre",
+  "Diciembre",
+];
 
 const sortExperiences = (items) => {
   const monthOrder = [
@@ -69,10 +86,26 @@ const sortExperiences = (items) => {
 };
 
 export const Experiencia = () => {
+  const navigate = useNavigate();
   const [experiences, setExperiences] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
+  const swal = Swal.mixin({
+    customClass: {
+      popup: "swal-portfolio-popup",
+      title: "swal-portfolio-title",
+      htmlContainer: "swal-portfolio-html",
+      actions: "swal-portfolio-actions",
+      confirmButton: "swal-portfolio-confirm",
+      cancelButton: "swal-portfolio-cancel",
+    },
+    buttonsStyling: false,
+    background: "var(--card-bg)",
+    color: "var(--text-color)",
+    iconColor: "var(--accent-color)",
+  });
+
+  const fetchExperiencias = () =>
     getExperiencias()
       .then((data) => {
         const sorted = sortExperiences(data || []);
@@ -84,7 +117,35 @@ export const Experiencia = () => {
       .finally(() => {
         setLoading(false);
       });
+
+  useEffect(() => {
+    fetchExperiencias();
   }, []);
+
+  const openCreateForm = () => navigate("/admin/experiencia/nuevo");
+  const openEditForm = (exp) => navigate(`/admin/experiencia/${exp.id}`);
+
+  const handleDelete = async (exp) => {
+    const res = await swal.fire({
+      icon: "question",
+      title: "¿Eliminar experiencia?",
+      text: `${exp.puesto} - ${exp.empresa}`,
+      showCancelButton: true,
+      confirmButtonText: "Eliminar",
+      cancelButtonText: "Cancelar",
+    });
+    if (res.isConfirmed) {
+      try {
+        await deleteExperiencia(exp.id);
+        setExperiences((prev) => prev.filter((e) => e.id !== exp.id));
+        await swal.fire({ icon: "success", title: "Eliminado" });
+      } catch {
+        await swal.fire({ icon: "error", title: "No se pudo eliminar" });
+      }
+    }
+  };
+
+  // El formulario se gestiona en rutas /admin/experiencia/*
 
   return (
     <motion.section
@@ -95,14 +156,36 @@ export const Experiencia = () => {
       viewport={{ once: true }}
       transition={{ duration: 0.6 }}
     >
-      <motion.h2
-        variants={fadeInUp}
-        initial="initial"
-        whileInView="animate"
-        viewport={{ once: true }}
-      >
-        Experiencia Laboral
-      </motion.h2>
+      <div style={{ display: "flex", justifyContent: "center" }}>
+        <motion.div
+          variants={fadeInUp}
+          initial="initial"
+          whileInView="animate"
+          viewport={{ once: true }}
+          style={{ display: "inline-flex", alignItems: "center", gap: ".6rem" }}
+        >
+          <motion.h2 style={{ textAlign: "center" }}>Experiencia Laboral</motion.h2>
+          <button
+            onClick={openCreateForm}
+            aria-label="Añadir experiencia"
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              justifyContent: "center",
+              width: 36,
+              height: 36,
+              borderRadius: 999,
+              border: "1px solid var(--card-border)",
+              background: "rgba(15, 23, 42, 0.9)",
+              color: "var(--accent-color)",
+              cursor: "pointer",
+            }}
+          >
+            <i className="fa-solid fa-plus" />
+          </button>
+        </motion.div>
+      </div>
+
       <motion.div
         className="experience-grid"
         variants={staggerContainer}
@@ -110,6 +193,19 @@ export const Experiencia = () => {
         whileInView="animate"
         viewport={{ once: true }}
       >
+        {loading && (
+          <p
+            style={{
+              textAlign: "center",
+              color: "var(--light-text)",
+              marginBottom: "1rem",
+            }}
+          >
+            Cargando experiencias...
+          </p>
+        )}
+        {/* Formulario se gestiona en página aparte */}
+
         {experiences.map((exp) => (
           <motion.div
             key={exp.id}
@@ -118,15 +214,47 @@ export const Experiencia = () => {
             whileHover={{ y: -8, transition: { duration: 0.2 } }}
           >
             <div className="experience-header">
-              <div className="experience-title-row">
+              <div className="experience-title-row" style={{ gap: ".5rem" }}>
                 <h3>{exp.puesto}</h3>
-                <span
-                  className={`experience-status ${
-                    exp.trabajoActivo ? "active" : "ended"
-                  }`}
-                >
-                  {exp.trabajoActivo ? "En activo" : "Finalizado"}
-                </span>
+                <div style={{ display: "flex", alignItems: "center", gap: ".4rem" }}>
+                  <span
+                    className={`experience-status ${
+                      exp.trabajoActivo ? "active" : "ended"
+                    }`}
+                  >
+                    {exp.trabajoActivo ? "En activo" : "Finalizado"}
+                  </span>
+                  <button
+                    aria-label="Editar"
+                    onClick={() => openEditForm(exp)}
+                    style={{
+                      width: 28,
+                      height: 28,
+                      borderRadius: 8,
+                      border: "1px solid var(--card-border)",
+                      background: "rgba(15,23,42,0.7)",
+                      color: "var(--accent-color)",
+                      cursor: "pointer",
+                    }}
+                  >
+                    <i className="fa-solid fa-pen" />
+                  </button>
+                  <button
+                    aria-label="Borrar"
+                    onClick={() => handleDelete(exp)}
+                    style={{
+                      width: 28,
+                      height: 28,
+                      borderRadius: 8,
+                      border: "1px solid var(--card-border)",
+                      background: "rgba(15,23,42,0.7)",
+                      color: "#f87171",
+                      cursor: "pointer",
+                    }}
+                  >
+                    <i className="fa-solid fa-trash" />
+                  </button>
+                </div>
               </div>
               <span className="experience-company">{exp.empresa}</span>
               <span className="experience-dates">
