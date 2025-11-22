@@ -8,12 +8,14 @@ import { Habilidades } from "./components/Habilidades";
 import { Hero } from "./components/Hero";
 import { Navbar } from "./components/Navbar";
 import { Proyectos } from "./components/Proyectos";
+import emailjs from "@emailjs/browser";
 
 function App() {
   const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
     setIsLoaded(true);
+    emailjs.init(import.meta.env.VITE_EMAILJS_PUBLIC_KEY);
   }, []);
 
   return (
