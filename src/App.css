@@ -981,6 +981,13 @@ body {
   grid-column: 1 / -1;
 }
 
+/* Admin form labels */
+.admin-label {
+  color: var(--accent-color);
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
 .admin-form .toggle {
   display: flex;
   align-items: center;

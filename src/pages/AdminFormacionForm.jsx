@@ -156,43 +156,63 @@ export default function AdminFormacionForm() {
           style={{ padding: "1.5rem 1.75rem", maxWidth: 800, margin: "0 auto" }}
         >
           <div style={{ display: "grid", gap: "0.75rem", gridTemplateColumns: "1fr 1fr" }}>
-            <input className="admin-input" name="nombre" placeholder="Nombre del estudio" value={formData.nombre} onChange={handleChange} />
-            <input className="admin-input" name="centro" placeholder="Centro" value={formData.centro} onChange={handleChange} />
-            <select className="admin-input" name="mesInicio" value={formData.mesInicio} onChange={handleChange}>
-              <option value="">Mes inicio</option>
-              {MONTHS.map((m) => (
-                <option key={m} value={m}>{m}</option>
-              ))}
-            </select>
-            <input
-              className="admin-input"
-              name="anoInicio"
-              placeholder="Año inicio"
-              type="text"
-              inputMode="numeric"
-              pattern="[0-9]*"
-              value={formData.anoInicio}
-              onChange={handleYearInput('anoInicio')}
-            />
+            <div style={{ display: "flex", flexDirection: "column", gap: ".35rem" }}>
+              <label htmlFor="nombre" className="admin-label">Nombre del estudio</label>
+              <input id="nombre" className="admin-input" name="nombre" placeholder="Nombre del estudio" value={formData.nombre} onChange={handleChange} />
+            </div>
+            <div style={{ display: "flex", flexDirection: "column", gap: ".35rem" }}>
+              <label htmlFor="centro" className="admin-label">Centro</label>
+              <input id="centro" className="admin-input" name="centro" placeholder="Centro" value={formData.centro} onChange={handleChange} />
+            </div>
+            <div style={{ display: "flex", flexDirection: "column", gap: ".35rem" }}>
+              <label htmlFor="mesInicio" className="admin-label">Mes de inicio</label>
+              <select id="mesInicio" className="admin-input" name="mesInicio" value={formData.mesInicio} onChange={handleChange}>
+                <option value="">Selecciona mes</option>
+                {MONTHS.map((m) => (
+                  <option key={m} value={m}>{m}</option>
+                ))}
+              </select>
+            </div>
+            <div style={{ display: "flex", flexDirection: "column", gap: ".35rem" }}>
+              <label htmlFor="anoInicio" className="admin-label">Año de inicio</label>
+              <input
+                id="anoInicio"
+                className="admin-input"
+                name="anoInicio"
+                placeholder="Año inicio"
+                type="text"
+                inputMode="numeric"
+                pattern="[0-9]*"
+                value={formData.anoInicio}
+                onChange={handleYearInput('anoInicio')}
+              />
+            </div>
 
             {!formData.cursandoAhora && (
               <>
-                <select className="admin-input" name="mesFin" value={formData.mesFin} onChange={handleChange}>
-                  <option value="">Mes fin</option>
-                  {MONTHS.map((m) => (
-                    <option key={m} value={m}>{m}</option>
-                  ))}
-                </select>
-                <input
-                  className="admin-input"
-                  name="anoFin"
-                  placeholder="Año fin"
-                  type="text"
-                  inputMode="numeric"
-                  pattern="[0-9]*"
-                  value={formData.anoFin}
-                  onChange={handleYearInput('anoFin')}
-                />
+                <div style={{ display: "flex", flexDirection: "column", gap: ".35rem" }}>
+                  <label htmlFor="mesFin" className="admin-label">Mes de fin</label>
+                  <select id="mesFin" className="admin-input" name="mesFin" value={formData.mesFin} onChange={handleChange}>
+                    <option value="">Selecciona mes</option>
+                    {MONTHS.map((m) => (
+                      <option key={m} value={m}>{m}</option>
+                    ))}
+                  </select>
+                </div>
+                <div style={{ display: "flex", flexDirection: "column", gap: ".35rem" }}>
+                  <label htmlFor="anoFin" className="admin-label">Año de fin</label>
+                  <input
+                    id="anoFin"
+                    className="admin-input"
+                    name="anoFin"
+                    placeholder="Año fin"
+                    type="text"
+                    inputMode="numeric"
+                    pattern="[0-9]*"
+                    value={formData.anoFin}
+                    onChange={handleYearInput('anoFin')}
+                  />
+                </div>
               </>
             )}
           </div>

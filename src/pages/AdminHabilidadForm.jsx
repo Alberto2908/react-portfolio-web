@@ -173,26 +173,37 @@ export default function AdminHabilidadForm() {
                 </div>
               </div>
             )}
-            <input
-              className="admin-input"
-              name="name"
-              placeholder="Nombre"
-              value={formData.name}
-              onChange={handleChange}
-            />
-            <select className="admin-input" name="category" value={formData.category} onChange={handleChange}>
-              <option value="">Categoría</option>
-              {CATEGORY_OPTIONS.map((opt) => (
-                <option key={opt.value} value={opt.value}>{opt.label}</option>
-              ))}
-            </select>
-            <input
-              className="admin-input span-2"
-              type="file"
-              accept="image/*"
-              name="image"
-              onChange={handleFileChange}
-            />
+            <div style={{ display: "flex", flexDirection: "column", gap: ".35rem" }}>
+              <label htmlFor="name" className="admin-label">Nombre</label>
+              <input
+                id="name"
+                className="admin-input"
+                name="name"
+                placeholder="Nombre"
+                value={formData.name}
+                onChange={handleChange}
+              />
+            </div>
+            <div style={{ display: "flex", flexDirection: "column", gap: ".35rem" }}>
+              <label htmlFor="category" className="admin-label">Categoría</label>
+              <select id="category" className="admin-input" name="category" value={formData.category} onChange={handleChange}>
+                <option value="">Selecciona categoría</option>
+                {CATEGORY_OPTIONS.map((opt) => (
+                  <option key={opt.value} value={opt.value}>{opt.label}</option>
+                ))}
+              </select>
+            </div>
+            <div className="span-2" style={{ display: "flex", flexDirection: "column", gap: ".35rem", gridColumn: "1 / -1" }}>
+              <label htmlFor="image" className="admin-label">Imagen</label>
+              <input
+                id="image"
+                className="admin-input"
+                type="file"
+                accept="image/*"
+                name="image"
+                onChange={handleFileChange}
+              />
+            </div>
             {editing && currentImage && !previewUrl && (
               <div className="span-2" style={{ gridColumn: "1 / -1", textAlign: "center", color: "var(--light-text)", fontSize: ".9rem" }}>
                 Actual: {getImageFileName(currentImage)} (se mantendrá si no seleccionas una nueva)

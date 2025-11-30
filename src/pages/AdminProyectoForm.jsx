@@ -170,22 +170,42 @@ export default function AdminProyectoForm() {
               </div>
             )}
 
-            <input className="admin-input" name="nombre" placeholder="Nombre" value={formData.nombre} onChange={handleChange} />
-            <input className="admin-input" name="enlaceGithub" placeholder="Enlace GitHub" value={formData.enlaceGithub} onChange={handleChange} />
+            <div style={{ display: "flex", flexDirection: "column", gap: ".35rem" }}>
+              <label htmlFor="nombre" className="admin-label">Nombre</label>
+              <input id="nombre" className="admin-input" name="nombre" placeholder="Nombre" value={formData.nombre} onChange={handleChange} />
+            </div>
 
-            <textarea className="admin-input span-2" name="descripcion" placeholder="Descripción" value={formData.descripcion} onChange={handleChange} />
+            <div style={{ display: "flex", flexDirection: "column", gap: ".35rem" }}>
+              <label htmlFor="enlaceGithub" className="admin-label">Enlace GitHub</label>
+              <input id="enlaceGithub" className="admin-input" name="enlaceGithub" placeholder="Enlace GitHub" value={formData.enlaceGithub} onChange={handleChange} />
+            </div>
 
-            <input className="admin-input span-2" name="enlaceDespliegue" placeholder="Enlace de despliegue (opcional)" value={formData.enlaceDespliegue} onChange={handleChange} />
+            <div className="span-2" style={{ display: "flex", flexDirection: "column", gap: ".35rem", gridColumn: "1 / -1" }}>
+              <label htmlFor="descripcion" className="admin-label">Descripción</label>
+              <textarea id="descripcion" className="admin-input" name="descripcion" placeholder="Descripción" value={formData.descripcion} onChange={handleChange} />
+            </div>
 
-            <input
-              className="admin-input span-2"
-              name="tecnologiasText"
-              placeholder="Tecnologías (entre 1 y 3, separadas por coma)"
-              value={formData.tecnologiasText}
-              onChange={handleChange}
-            />
+            <div className="span-2" style={{ display: "flex", flexDirection: "column", gap: ".35rem", gridColumn: "1 / -1" }}>
+              <label htmlFor="enlaceDespliegue" className="admin-label">Enlace de despliegue (opcional)</label>
+              <input id="enlaceDespliegue" className="admin-input" name="enlaceDespliegue" placeholder="Enlace de despliegue (opcional)" value={formData.enlaceDespliegue} onChange={handleChange} />
+            </div>
 
-            <input className="admin-input span-2" type="file" accept="image/*" name="imagen" onChange={handleFileChange} />
+            <div className="span-2" style={{ display: "flex", flexDirection: "column", gap: ".35rem", gridColumn: "1 / -1" }}>
+              <label htmlFor="tecnologiasText" className="admin-label">Tecnologías (entre 1 y 3, separadas por coma)</label>
+              <input
+                id="tecnologiasText"
+                className="admin-input"
+                name="tecnologiasText"
+                placeholder="Tecnologías (entre 1 y 3, separadas por coma)"
+                value={formData.tecnologiasText}
+                onChange={handleChange}
+              />
+            </div>
+
+            <div className="span-2" style={{ display: "flex", flexDirection: "column", gap: ".35rem", gridColumn: "1 / -1" }}>
+              <label htmlFor="imagen" className="admin-label">Imagen</label>
+              <input id="imagen" className="admin-input" type="file" accept="image/*" name="imagen" onChange={handleFileChange} />
+            </div>
           </div>
 
           <div style={{ display: "flex", gap: ".5rem", marginTop: "0.9rem", justifyContent: "center" }}>
