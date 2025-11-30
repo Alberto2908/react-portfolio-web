@@ -90,40 +90,22 @@ export const Proyectos = () => {
       viewport={{ once: true }}
       transition={{ duration: 0.6 }}
     >
-      <div style={{ display: "flex", justifyContent: "center" }}>
+      <div className="section-header-wrapper">
         <motion.div
           variants={fadeInUp}
           initial="initial"
           whileInView="animate"
           viewport={{ once: true }}
-          style={{
-            display: "inline-flex",
-            alignItems: "center",
-            gap: ".6rem",
-            marginBottom: "5rem",
-          }}
+          className="section-header section-header--projects"
         >
-          <motion.h2 style={{ margin: 0, textAlign: "center" }}>
-            Mis Proyectos
-          </motion.h2>
+          <motion.h2 className="section-header-title">Mis Proyectos</motion.h2>
           <button
-            onClick={openCreateForm}
             aria-label="Añadir proyecto"
-            style={{
-              display: "inline-flex",
-              alignItems: "center",
-              justifyContent: "center",
-              width: 36,
-              height: 36,
-              borderRadius: 999,
-              border: "1px solid var(--card-border)",
-              background: "rgba(15, 23, 42, 0.9)",
-              color: "var(--accent-color)",
-              cursor: "pointer",
-              lineHeight: 0,
-            }}
+            title="Añadir proyecto"
+            onClick={openCreateForm}
+            className="xp-create-btn"
           >
-            <i className="fa-solid fa-plus" />
+            <span className="xp-plus">+</span>
           </button>
         </motion.div>
       </div>
@@ -168,15 +150,26 @@ export const Proyectos = () => {
             <div className="project-header">
               <h3>{p.nombre}</h3>
               <div className="project-actions">
-                {p.enlace && (
+                {(p.enlaceGithub || p.enlace) && (
                   <a
-                    href={p.enlace}
+                    href={p.enlaceGithub || p.enlace}
                     target="_blank"
                     rel="noreferrer"
-                    aria-label={`Abrir repositorio de ${p.nombre}`}
+                    aria-label={`Abrir GitHub de ${p.nombre}`}
                     className="project-action-link"
                   >
                     <i className="fa-brands fa-github" />
+                  </a>
+                )}
+                {p.enlaceDespliegue && (
+                  <a
+                    href={p.enlaceDespliegue}
+                    target="_blank"
+                    rel="noreferrer"
+                    aria-label={`Abrir demo de ${p.nombre}`}
+                    className="project-action-link"
+                  >
+                    <i className="fa-solid fa-arrow-up-right-from-square" />
                   </a>
                 )}
                 <button

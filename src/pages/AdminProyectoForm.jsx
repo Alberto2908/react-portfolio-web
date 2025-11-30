@@ -27,7 +27,8 @@ export default function AdminProyectoForm() {
   const [formData, setFormData] = useState({
     nombre: "",
     descripcion: "",
-    enlace: "",
+    enlaceGithub: "",
+    enlaceDespliegue: "",
     tecnologiasText: "",
     imagen: null, // File | null
   });
@@ -43,7 +44,8 @@ export default function AdminProyectoForm() {
           ...prev,
           nombre: p.nombre || "",
           descripcion: p.descripcion || "",
-          enlace: p.enlace || "",
+          enlaceGithub: p.enlaceGithub || p.enlace || "",
+          enlaceDespliegue: p.enlaceDespliegue || "",
           tecnologiasText: (p.tecnologias || []).join(", "),
           imagen: null,
         }));
@@ -90,7 +92,7 @@ export default function AdminProyectoForm() {
     const issues = [];
     if (!formData.nombre.trim()) issues.push("Indica el nombre del proyecto.");
     if (!formData.descripcion.trim()) issues.push("Añade una breve descripción.");
-    if (!formData.enlace.trim()) issues.push("Añade un enlace (GitHub o demo).");
+    if (!formData.enlaceGithub.trim()) issues.push("Añade el enlace de GitHub.");
     if (tecnologiasArray.length < 1 || tecnologiasArray.length > 3)
       issues.push("Indica entre 1 y 3 tecnologías separadas por coma.");
     tecnologiasArray.forEach((t) => {
@@ -118,7 +120,10 @@ export default function AdminProyectoForm() {
       const fd = new FormData();
       fd.append("nombre", formData.nombre.trim());
       fd.append("descripcion", formData.descripcion.trim());
-      fd.append("enlace", formData.enlace.trim());
+      fd.append("enlaceGithub", formData.enlaceGithub.trim());
+      if (formData.enlaceDespliegue.trim()) {
+        fd.append("enlaceDespliegue", formData.enlaceDespliegue.trim());
+      }
       tecnologiasArray.forEach((t) => fd.append("tecnologias", t));
       if (formData.imagen) fd.append("imagen", formData.imagen);
 
@@ -166,9 +171,11 @@ export default function AdminProyectoForm() {
             )}
 
             <input className="admin-input" name="nombre" placeholder="Nombre" value={formData.nombre} onChange={handleChange} />
-            <input className="admin-input" name="enlace" placeholder="Enlace (GitHub o demo)" value={formData.enlace} onChange={handleChange} />
+            <input className="admin-input" name="enlaceGithub" placeholder="Enlace GitHub" value={formData.enlaceGithub} onChange={handleChange} />
 
             <textarea className="admin-input span-2" name="descripcion" placeholder="Descripción" value={formData.descripcion} onChange={handleChange} />
+
+            <input className="admin-input span-2" name="enlaceDespliegue" placeholder="Enlace de despliegue (opcional)" value={formData.enlaceDespliegue} onChange={handleChange} />
 
             <input
               className="admin-input span-2"

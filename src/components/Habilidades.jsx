@@ -120,36 +120,25 @@ export const Habilidades = () => {
       viewport={{ once: true }}
       transition={{ duration: 0.6 }}
     >
-      <div style={{ display: "flex", justifyContent: "center" }}>
-              <motion.div
-                variants={fadeInUp}
-                initial="initial"
-                whileInView="animate"
-                viewport={{ once: true }}
-                style={{ display: "inline-flex", alignItems: "center", gap: ".6rem", marginBottom: "4rem" }}
-              >
-                <motion.h2 style={{ margin: 0, textAlign: "center" }}>Habilidades Técnicas</motion.h2>
-                <button
-                  onClick={openCreateForm}
-                  aria-label="Añadir habilidad"
-                  style={{
-                    display: "inline-flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    width: 36,
-                    height: 36,
-                    borderRadius: 999,
-                    border: "1px solid var(--card-border)",
-                    background: "rgba(15, 23, 42, 0.9)",
-                    color: "var(--accent-color)",
-                    cursor: "pointer",
-                    lineHeight: 0,
-                  }}
-                >
-                  <i className="fa-solid fa-plus" style={{ transform: "translateY(1px)" }} />
-                </button>
-              </motion.div>
-            </div>
+      <div className="section-header-wrapper">
+        <motion.div
+          variants={fadeInUp}
+          initial="initial"
+          whileInView="animate"
+          viewport={{ once: true }}
+          className="section-header section-header--skills"
+        >
+          <motion.h2 className="section-header-title">Habilidades Técnicas</motion.h2>
+          <button
+            onClick={openCreateForm}
+            aria-label="Añadir habilidad"
+            title="Añadir habilidad"
+            className="xp-create-btn"
+          >
+            <span className="xp-plus">+</span>
+          </button>
+        </motion.div>
+      </div>
 
       <motion.div
         className="skills-grid"
@@ -159,15 +148,7 @@ export const Habilidades = () => {
         viewport={{ once: true }}
       >
         {loading && skills.length === 0 ? (
-          <p
-            style={{
-              textAlign: "center",
-              color: "var(--light-text)",
-              marginBottom: "1rem",
-            }}
-          >
-            Cargando habilidades...
-          </p>
+          <p className="loading-text">Cargando habilidades...</p>
         ) : null}
 
         {categoryEntries.map(([categoryKey, categorySkills]) => (
@@ -188,22 +169,8 @@ export const Habilidades = () => {
                   variants={fadeInUp}
                   whileHover={{ x: 4, transition: { duration: 0.15 } }}
                 >
-                  <div
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "space-between",
-                      width: "100%",
-                      gap: ".5rem",
-                    }}
-                  >
-                    <div
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: ".5rem",
-                      }}
-                    >
+                  <div className="row-with-actions-main">
+                    <div className="row-with-actions">
                       <div className="skill-row-icon">
                         <img
                           src={getSkillImageSrc(skill.image)}
@@ -213,40 +180,18 @@ export const Habilidades = () => {
                       </div>
                       <span className="skill-row-name">{skill.name}</span>
                     </div>
-                    <div
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: ".35rem",
-                      }}
-                    >
+                    <div className="admin-inline-actions">
                       <button
                         aria-label="Editar"
                         onClick={() => openEditForm(skill)}
-                        style={{
-                          width: 26,
-                          height: 26,
-                          borderRadius: 8,
-                          border: "1px solid var(--card-border)",
-                          background: "rgba(15,23,42,0.7)",
-                          color: "var(--accent-color)",
-                          cursor: "pointer",
-                        }}
+                        className="project-action-btn project-action-btn--edit project-action-btn--sm"
                       >
                         <i className="fa-solid fa-pen" />
                       </button>
                       <button
                         aria-label="Borrar"
                         onClick={() => handleDelete(skill)}
-                        style={{
-                          width: 26,
-                          height: 26,
-                          borderRadius: 8,
-                          border: "1px solid var(--card-border)",
-                          background: "rgba(15,23,42,0.7)",
-                          color: "#f87171",
-                          cursor: "pointer",
-                        }}
+                        className="project-action-btn project-action-btn--delete project-action-btn--sm"
                       >
                         <i className="fa-solid fa-trash" />
                       </button>

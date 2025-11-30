@@ -156,33 +156,22 @@ export const Experiencia = () => {
       viewport={{ once: true }}
       transition={{ duration: 0.6 }}
     >
-      <div style={{ display: "flex", justifyContent: "center" }}>
+      <div className="section-header-wrapper">
         <motion.div
           variants={fadeInUp}
           initial="initial"
           whileInView="animate"
           viewport={{ once: true }}
-          style={{ display: "inline-flex", alignItems: "center", gap: ".6rem", marginBottom: "5rem" }}
+          className="section-header section-header--experience"
         >
-          <motion.h2 style={{ margin: 0, textAlign: "center" }}>Experiencia Laboral</motion.h2>
+          <motion.h2 className="section-header-title">Experiencia Laboral</motion.h2>
           <button
-            onClick={openCreateForm}
             aria-label="Añadir experiencia"
-            style={{
-              display: "inline-flex",
-              alignItems: "center",
-              justifyContent: "center",
-              width: 36,
-              height: 36,
-              borderRadius: 999,
-              border: "1px solid var(--card-border)",
-              background: "rgba(15, 23, 42, 0.9)",
-              color: "var(--accent-color)",
-              cursor: "pointer",
-              lineHeight: 0,
-            }}
+            title="Añadir experiencia"
+            onClick={openCreateForm}
+            className="xp-create-btn"
           >
-            <i className="fa-solid fa-plus" style={{ transform: "translateY(1px)" }} />
+            <span className="xp-plus">+</span>
           </button>
         </motion.div>
       </div>
@@ -195,15 +184,7 @@ export const Experiencia = () => {
         viewport={{ once: true }}
       >
         {loading && (
-          <p
-            style={{
-              textAlign: "center",
-              color: "var(--light-text)",
-              marginBottom: "1rem",
-            }}
-          >
-            Cargando experiencias...
-          </p>
+          <p className="loading-text">Cargando experiencias...</p>
         )}
         {/* Formulario se gestiona en página aparte */}
 
@@ -215,9 +196,9 @@ export const Experiencia = () => {
             whileHover={{ y: -8, transition: { duration: 0.2 } }}
           >
             <div className="experience-header">
-              <div className="experience-title-row" style={{ gap: ".5rem" }}>
+              <div className="experience-title-row">
                 <h3>{exp.puesto}</h3>
-                <div style={{ display: "flex", alignItems: "center", gap: ".4rem" }}>
+                <div className="row-with-actions">
                   <span
                     className={`experience-status ${
                       exp.trabajoActivo ? "active" : "ended"
@@ -228,30 +209,14 @@ export const Experiencia = () => {
                   <button
                     aria-label="Editar"
                     onClick={() => openEditForm(exp)}
-                    style={{
-                      width: 28,
-                      height: 28,
-                      borderRadius: 8,
-                      border: "1px solid var(--card-border)",
-                      background: "rgba(15,23,42,0.7)",
-                      color: "var(--accent-color)",
-                      cursor: "pointer",
-                    }}
+                    className="project-action-btn project-action-btn--edit"
                   >
                     <i className="fa-solid fa-pen" />
                   </button>
                   <button
                     aria-label="Borrar"
                     onClick={() => handleDelete(exp)}
-                    style={{
-                      width: 28,
-                      height: 28,
-                      borderRadius: 8,
-                      border: "1px solid var(--card-border)",
-                      background: "rgba(15,23,42,0.7)",
-                      color: "#f87171",
-                      cursor: "pointer",
-                    }}
+                    className="project-action-btn project-action-btn--delete"
                   >
                     <i className="fa-solid fa-trash" />
                   </button>
