@@ -18,6 +18,7 @@
   --gradient-end: #db2777;
   --nav-bg: rgba(15, 23, 42, 0.8);
   --card-border: rgba(148, 163, 184, 0.1);
+  --nav-offset: 96px;
 }
 
 body {
@@ -26,6 +27,8 @@ body {
   background: var(--background);
   overflow-x: hidden;
 }
+
+html { scroll-behavior: smooth; scroll-padding-top: var(--nav-offset); }
 
 .app {
   opacity: 0;
@@ -301,6 +304,7 @@ body {
   padding: 6rem 5% 3rem;
   background-color: var(--background);
   position: relative;
+  scroll-margin-top: var(--nav-offset);
 }
 
 .projects h2 {
@@ -373,7 +377,7 @@ body {
 .section-add-btn .fa-solid,
 .section-add-btn .fa { display: block; line-height: 1; }
 
-/* Botón único para crear experiencia */
+/* Botón crear experiencia */
 .xp-create-btn {
   display: inline-grid;
   place-items: center;
@@ -465,6 +469,7 @@ body {
   padding: 4rem 5%;
   background-color: var(--background);
   position: relative;
+  scroll-margin-top: var(--nav-offset);
 }
 
 .skills h2 {
@@ -473,80 +478,131 @@ body {
   margin-bottom: 2.5rem;
 }
 
-.skills-grid {
-  max-width: 1100px;
+/* Habilidades */
+
+.stack-grid {
+  --stack-item-size: 80px;
+  --stack-col-gap: 1.5rem;
+  --stack-row-gap: 1.5rem;
+  max-width: calc(8 * var(--stack-item-size) + 7 * var(--stack-col-gap));
   margin: 0 auto;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: 2rem;
-  align-items: stretch;
-}
-
-.skills-column {
-  min-width: 0;
-}
-
-.skills-column-header {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.75rem;
-  margin-bottom: 0.75rem;
+  flex-wrap: wrap;
+  gap: var(--stack-row-gap) var(--stack-col-gap);
+  justify-content: center;
 }
 
-.skills-column-header h3 {
-  font-size: 1.1rem;
-}
-
-.skills-count {
-  font-size: 0.8rem;
-  color: var(--light-text);
-  padding: 0.1rem 0.5rem;
-  border-radius: 999px;
-  border: 1px solid rgba(148, 163, 184, 0.35);
-}
-
-.skills-list {
-  display: flex;
-  flex-direction: column;
-  gap: 0.4rem;
-}
-
-.skill-row {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.35rem 0.75rem;
-  border-radius: 999px;
+.stack-item { 
+  position: relative;
   background: var(--card-bg);
   border: 1px solid var(--card-border);
-  font-size: 0.9rem;
+  border-radius: 14px;
+  width: var(--stack-item-size);
+  height: var(--stack-item-size);
+  padding: 0;
+  display: grid;
+  place-items: center;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+  transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+  isolation: isolate;
+  overflow: visible;
 }
+.stack-item:hover { transform: translateY(-1px) scale(1.02); box-shadow: 0 10px 22px rgba(0,0,0,0.28); border-color: var(--stack-color, var(--accent-color)); }
 
-.skill-row:hover {
-  border-color: var(--accent-color);
+/* Glow ring overlay on hover, similar to reference */
+.stack-item::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(140px 140px at var(--spot-x, 50%) var(--spot-y, 50%), color-mix(in srgb, var(--stack-color) 35%, transparent), transparent 60%);
+  opacity: 0;
+  transition: opacity .2s ease, background .05s linear;
+  pointer-events: none;
+  z-index: 0;
 }
-
-.skill-row-icon {
-  width: 22px;
-  height: 22px;
-  border-radius: 999px;
-  background: transparent;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
+.stack-item::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  border: 2px solid var(--stack-color, var(--accent-color));
+  box-shadow: 0 0 0 1px rgba(255,255,255,0.06) inset, 0 0 8px var(--stack-color, var(--accent-color));
+  opacity: 0;
+  transition: opacity .2s ease;
+  pointer-events: none;
+  z-index: 1;
 }
+.stack-item:hover::before { opacity: 0.55; }
+.stack-item:hover::after { opacity: 0.35; }
 
-.skill-row-icon img {
-  width: 18px;
-  height: 18px;
-  object-fit: contain;
+.stack-icon { width: 56px; height: 56px; border-radius: 14px; display: grid; place-items: center; background: transparent; border: none; line-height: 0; }
+.stack-icon img { width: 42px; height: 42px; object-fit: contain; object-position: center; display: block; filter: drop-shadow(0 0 6px rgba(0,0,0,.32)); transition: transform .18s ease; transform: none; }
+.stack-item:hover .stack-icon img { transform: scale(1.12); }
+
+/* Pill container to align name and actions inline */
+.stack-pill {
+  position: absolute;
+  top: -35px;
+  left: 50%;
+  transform: translate(-50%, -6px) scale(0.98);
+  display: inline-block; /* ancho = solo el nombre */
+  opacity: 0;
+  pointer-events: none; /* evita capturar eventos cuando está oculta */
+  transition: opacity .18s ease, transform .18s ease;
+  z-index: 2;
 }
+.stack-item:hover .stack-pill,
+.stack-pill:hover { opacity: 1; transform: translate(-50%, -24px) scale(1.26); pointer-events: auto; }
 
-.skill-row-name {
+/* Inside the pill: name is static; actions inline and clickable */
+.stack-pill .stack-item-name { position: static; transform: none !important; opacity: 1; }
+.stack-pill .stack-actions { position: absolute; left: calc(100% + 0.4rem); top: 50%; transform: translateY(-50%); opacity: 1; pointer-events: auto; display: inline-flex; gap: .25rem; }
+.stack-item-name {
+  position: absolute;
+  top: -35px;
+  left: 50%;
+  transform: translate(-50%, -6px) scale(0.98);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .18s ease, transform .18s ease;
+  padding: 0.75rem 0.75rem;
+  border-radius: 15px;
+  border: 2px solid var(--stack-color, var(--accent-color));
+  background: rgba(15, 23, 42, 0.5);
+  backdrop-filter: blur(8px);
+  color: var(--stack-color, var(--accent-color));
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: 0;
+  box-shadow: 0 0 0 1px rgba(255,255,255,0.06) inset, 0 0 10px var(--stack-color, var(--accent-color));
   white-space: nowrap;
+  z-index: 2;
 }
+.stack-item:hover .stack-item-name { opacity: 1; transform: translate(-50%, -24px) scale(1.26); }
+
+/* Actions: top-right inside card; visible on card or self hover */
+.stack-actions {
+  position: absolute;
+  top: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: .25rem;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .15s ease;
+  z-index: 3;
+}
+.stack-item:hover .stack-actions,
+.stack-actions:hover { opacity: 1; pointer-events: auto; }
+
+/* Smaller bubbles on stack items */
+.stack-item .project-action-btn { width: 22px; height: 22px; border-radius: 6px; }
+.stack-item .project-action-btn i { font-size: 0.8rem; }
+
+/* Colored backgrounds per category */
 
 .project-grid {
   display: grid;
@@ -760,6 +816,7 @@ body {
   padding: 4rem 5% 6rem;
   background-color: var(--background);
   position: relative;
+  scroll-margin-top: var(--nav-offset);
 }
 
 .experience h2 {
@@ -1035,6 +1092,7 @@ body {
   padding: 4rem 5% 3rem;
   background-color: var(--background);
   position: relative;
+  scroll-margin-top: var(--nav-offset);
 }
 
 .education h2 {
@@ -1149,12 +1207,28 @@ body {
   padding: 6rem 5%;
   background: var(--section-bg);
   position: relative;
+  scroll-margin-top: var(--nav-offset);
 }
 
 .contact::before {
   content: "";
   position: absolute;
   top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--accent-color),
+    transparent
+  );
+}
+
+.contact::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
   left: 0;
   right: 0;
   height: 3px;
@@ -1553,17 +1627,16 @@ body {
 }
 
 /* Habilidades responsive */
-@media (max-width: 600px) {
-  .skills {
-    padding: 4rem 1.5rem;
+@media (max-width: 640px) {
+  .skills { padding: 4rem 1.5rem; }
+  .stack-grid { 
+    --stack-item-size: 72px;
+    --stack-col-gap: 0.8rem;
+    --stack-row-gap: 1rem;
+    max-width: calc(8 * var(--stack-item-size) + 7 * var(--stack-col-gap));
+    gap: var(--stack-row-gap) var(--stack-col-gap);
+    justify-content: center;
   }
-  .skills-grid {
-    grid-template-columns: 1fr;
-  }
-}
-
-@media (min-width: 601px) and (max-width: 1200px) {
-  .skills-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
+  .stack-icon { width: 40px; height: 40px; }
+  .stack-icon img { width: 28px; height: 28px; }
 }

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { motion } from "framer-motion";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
@@ -20,16 +20,6 @@ const staggerContainer = {
 
 const BACKEND_BASE_URL = "http://localhost:8080";
 
-const CATEGORY_ORDER = ["frontend", "backend", "database", "tools", "other"];
-
-const CATEGORY_LABELS = {
-  frontend: "Frontend",
-  backend: "Backend",
-  database: "Base de datos",
-  tools: "Herramientas",
-  other: "Otros",
-};
-
 const getSkillImageSrc = (image) => {
   if (!image) return "/skills/default.png";
   if (image.startsWith("http")) return image;
@@ -42,10 +32,21 @@ const handleSkillImageError = (event) => {
   event.currentTarget.src = "/skills/default.png";
 };
 
+
+const hexToRgb = (hex) => {
+  const m = hex.replace('#','').match(/.{1,2}/g);
+  if (!m) return [244, 114, 182];
+  const [r,g,b] = m.map((x) => parseInt(x, 16));
+  return [r,g,b];
+};
+
+const rgba = (rgb, a) => `rgba(${rgb[0]}, ${rgb[1]}, ${rgb[2]}, ${a})`;
+
 export const Habilidades = () => {
   const navigate = useNavigate();
   const [skills, setSkills] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [dynamicColors, setDynamicColors] = useState({});
 
   const swal = Swal.mixin({
     customClass: {
@@ -62,15 +63,100 @@ export const Habilidades = () => {
     iconColor: "var(--accent-color)",
   });
 
-  const fetchHabilidades = () =>
-    getHabilidades()
-      .then((data) => setSkills(data || []))
-      .catch((err) => console.error("Error cargando habilidades", err))
-      .finally(() => setLoading(false));
+  const applyOrdered = useCallback((items) => {
+    const list = Array.isArray(items) ? items.slice() : [];
+    const total = list.length;
+    const result = new Array(total);
+    const taken = new Set();
+    const floating = [];
+
+    for (const sk of list) {
+      const pos = typeof sk.position === 'number' ? sk.position : null;
+      if (Number.isInteger(pos) && pos >= 1 && pos <= total && !taken.has(pos)) {
+        result[pos - 1] = sk;
+        taken.add(pos);
+      } else {
+        floating.push(sk);
+      }
+    }
+
+    for (let i = floating.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [floating[i], floating[j]] = [floating[j], floating[i]];
+    }
+    let idx = 0;
+    for (let i = 0; i < total; i++) {
+      if (!result[i]) {
+        result[i] = floating[idx++];
+      }
+    }
+    return result.filter(Boolean);
+  }, []);
 
   useEffect(() => {
-    fetchHabilidades();
-  }, []);
+    getHabilidades()
+      .then((data) => {
+        const base = Array.isArray(data) ? data : [];
+        setSkills(applyOrdered(base));
+      })
+      .catch((err) => console.error("Error cargando habilidades", err))
+      .finally(() => setLoading(false));
+  }, [applyOrdered]);
+
+  const computeDominantHex = (imgEl) => {
+    try {
+      const w = Math.max(1, Math.min(48, imgEl.naturalWidth));
+      const h = Math.max(1, Math.min(48, imgEl.naturalHeight));
+      const canvas = document.createElement("canvas");
+      canvas.width = 32;
+      canvas.height = 32;
+      const ctx = canvas.getContext("2d", { willReadFrequently: true });
+      const rw = imgEl.naturalWidth || w;
+      const rh = imgEl.naturalHeight || h;
+      ctx.drawImage(imgEl, 0, 0, rw, rh, 0, 0, 32, 32);
+      const data = ctx.getImageData(0, 0, 32, 32).data;
+      let r = 0, g = 0, b = 0, count = 0;
+      for (let i = 0; i < data.length; i += 4) {
+        const alpha = data[i + 3];
+        if (alpha < 16) continue;
+        r += data[i];
+        g += data[i + 1];
+        b += data[i + 2];
+        count++;
+      }
+      if (!count) return null;
+      r = Math.round(r / count);
+      g = Math.round(g / count);
+      b = Math.round(b / count);
+      const toHex = (n) => n.toString(16).padStart(2, "0");
+      return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
+    } catch {
+      return null;
+    }
+  };
+
+  const handleSpotMove = (e) => {
+    const el = e.currentTarget;
+    const rect = el.getBoundingClientRect();
+    const px = (e.clientX - rect.left) / rect.width;
+    const py = (e.clientY - rect.top) / rect.height;
+    el.style.setProperty('--spot-x', `${(px * 100).toFixed(1)}%`);
+    el.style.setProperty('--spot-y', `${(py * 100).toFixed(1)}%`);
+  };
+
+  const handleSpotLeave = (e) => {
+    const el = e.currentTarget;
+    el.style.setProperty('--spot-x', `50%`);
+    el.style.setProperty('--spot-y', `50%`);
+  };
+
+  const handleImgLoadColor = (e, skillId) => {
+    const el = e.currentTarget;
+    const hex = computeDominantHex(el);
+    if (hex) {
+      setDynamicColors((prev) => (prev[skillId] ? prev : { ...prev, [skillId]: hex }));
+    }
+  };
 
   const openCreateForm = () => navigate("/admin/habilidad/nuevo");
   const openEditForm = (sk) => navigate(`/admin/habilidad/${sk.id}`);
@@ -87,7 +173,7 @@ export const Habilidades = () => {
     if (res.isConfirmed) {
       try {
         await deleteHabilidad(sk.id);
-        setSkills((prev) => prev.filter((s) => s.id !== sk.id));
+        setSkills((prev) => applyOrdered(prev.filter((s) => s.id !== sk.id)));
         await swal.fire({ icon: "success", title: "Eliminada" });
       } catch {
         await swal.fire({ icon: "error", title: "No se pudo eliminar" });
@@ -95,21 +181,7 @@ export const Habilidades = () => {
     }
   };
 
-  const categoryMap = new Map();
-  CATEGORY_ORDER.forEach((c) => categoryMap.set(c, []));
-
-  skills.forEach((skill) => {
-    const raw = (skill.category || "other").toString().toLowerCase();
-    const key = CATEGORY_ORDER.includes(raw) ? raw : "other";
-    const arr = categoryMap.get(key) || [];
-    arr.push(skill);
-    categoryMap.set(key, arr);
-  });
-
-  const categoryEntries = CATEGORY_ORDER.map((key) => [
-    key,
-    categoryMap.get(key) || [],
-  ]).filter(([, items]) => items.length > 0);
+  const allItems = skills;
 
   return (
     <motion.section
@@ -140,69 +212,75 @@ export const Habilidades = () => {
         </motion.div>
       </div>
 
+      {/* Grid */}
       <motion.div
-        className="skills-grid"
+        className="stack-grid"
         variants={staggerContainer}
         initial="initial"
         whileInView="animate"
         viewport={{ once: true }}
       >
         {loading && skills.length === 0 ? (
-          <p className="loading-text">Cargando habilidades...</p>
+          <p className="loading-text" style={{ width: "100%", textAlign: "center" }}>Cargando habilidades...</p>
         ) : null}
 
-        {categoryEntries.map(([categoryKey, categorySkills]) => (
+        {allItems.map((skill) => {
+          const extractedHex = dynamicColors[skill.id];
+          const brandHex = extractedHex || '#f472b6';
+          const rgb = hexToRgb(brandHex);
+          const cardStyle = {
+            background: rgba(rgb, 0.12),
+            borderColor: rgba(rgb, 0.45),
+            '--stack-color': brandHex,
+          };
+          const btnStyle = {
+            background: rgba(rgb, 0.16),
+            borderColor: rgba(rgb, 0.52),
+            color: rgba(rgb, 0.96),
+          };
+          return (
           <motion.div
-            key={categoryKey}
-            className="skills-column"
+            key={skill.id}
+            className={`stack-item`}
             variants={fadeInUp}
+            style={cardStyle}
+            onMouseMove={handleSpotMove}
+            onMouseLeave={handleSpotLeave}
           >
-            <div className="skills-column-header">
-              <h3>{CATEGORY_LABELS[categoryKey] || categoryKey}</h3>
-              <span className="skills-count">{categorySkills.length}</span>
+            <div className="stack-icon">
+              <img
+                src={getSkillImageSrc(skill.image)}
+                alt={skill.name}
+                onError={handleSkillImageError}
+                onLoad={(e) => handleImgLoadColor(e, skill.id)}
+                crossOrigin="anonymous"
+              />
             </div>
-            <div className="skills-list">
-              {categorySkills.map((skill) => (
-                <motion.div
-                  key={skill.id}
-                  className="skill-row"
-                  variants={fadeInUp}
-                  whileHover={{ x: 4, transition: { duration: 0.15 } }}
-                >
-                  <div className="row-with-actions-main">
-                    <div className="row-with-actions">
-                      <div className="skill-row-icon">
-                        <img
-                          src={getSkillImageSrc(skill.image)}
-                          alt={skill.name}
-                          onError={handleSkillImageError}
-                        />
-                      </div>
-                      <span className="skill-row-name">{skill.name}</span>
-                    </div>
-                    <div className="admin-inline-actions">
-                      <button
-                        aria-label="Editar"
-                        onClick={() => openEditForm(skill)}
-                        className="project-action-btn project-action-btn--edit project-action-btn--sm"
-                      >
-                        <i className="fa-solid fa-pen" />
-                      </button>
-                      <button
-                        aria-label="Borrar"
-                        onClick={() => handleDelete(skill)}
-                        className="project-action-btn project-action-btn--delete project-action-btn--sm"
-                      >
-                        <i className="fa-solid fa-trash" />
-                      </button>
-                    </div>
-                  </div>
-                </motion.div>
-              ))}
+            <div className="stack-pill">
+              <div className="stack-item-name">{skill.name}</div>
+            </div>
+            <div className="stack-actions">
+              <button
+                aria-label="Editar"
+                onClick={() => openEditForm(skill)}
+                className="project-action-btn project-action-btn--edit project-action-btn--sm"
+                style={btnStyle}
+              >
+                <i className="fa-solid fa-pen" />
+              </button>
+              <button
+                aria-label="Borrar"
+                onClick={() => handleDelete(skill)}
+                className="project-action-btn project-action-btn--delete project-action-btn--sm"
+                style={btnStyle}
+              >
+                <i className="fa-solid fa-trash" />
+              </button>
             </div>
           </motion.div>
-        ))}
+        );
+        })}
       </motion.div>
     </motion.section>
   );
-};
+}

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { motion } from "framer-motion";
 import Swal from "sweetalert2";
-import { createHabilidad, getHabilidadById, updateHabilidad } from "../services/HabilidadService";
+import { createHabilidad, getHabilidadById, updateHabilidad, getHabilidades } from "../services/HabilidadService";
 
 const fadeInUp = {
   initial: { opacity: 0, y: 20 },
@@ -48,9 +48,11 @@ export default function AdminHabilidadForm() {
     name: "",
     image: null, // File | null
     category: "",
+    position: "",
   });
   const [currentImage, setCurrentImage] = useState("");
   const [previewUrl, setPreviewUrl] = useState("");
+  const [totalSkills, setTotalSkills] = useState(0);
 
   useEffect(() => {
     if (!id) return;
@@ -63,11 +65,19 @@ export default function AdminHabilidadForm() {
           // no precargamos archivo; la imagen actual se mantiene si no se sube una nueva
           image: null,
           category: (sk.category || "").toString().toLowerCase(),
+          position: sk.position != null ? String(sk.position) : "",
         }));
         setCurrentImage(sk.image || "");
       })
       .finally(() => setLoading(false));
   }, [id]);
+
+  // Fetch the total number of skills to bound the max allowed position
+  useEffect(() => {
+    getHabilidades()
+      .then((list) => setTotalSkills(Array.isArray(list) ? list.length : 0))
+      .catch(() => setTotalSkills(0));
+  }, []);
 
   const swal = Swal.mixin({
     customClass: {
@@ -103,6 +113,12 @@ export default function AdminHabilidadForm() {
     if (!formData.name.trim()) issues.push("Indica el nombre de la habilidad.");
     if (!editing && !formData.image) issues.push("Selecciona una imagen.");
     if (!formData.category) issues.push("Selecciona una categoría.");
+    const maxAllowed = editing ? Math.max(1, totalSkills) : Math.max(1, totalSkills + 1);
+    if (String(formData.position).trim() !== "") {
+      const pos = parseInt(formData.position, 10);
+      if (Number.isNaN(pos) || pos < 1) issues.push("La posición debe ser un número mayor o igual a 1.");
+      else if (pos > maxAllowed) issues.push(`La posición máxima permitida es ${maxAllowed}.`);
+    }
     return issues;
   };
 
@@ -124,6 +140,9 @@ export default function AdminHabilidadForm() {
       fd.append("category", formData.category);
       if (formData.image) {
         fd.append("image", formData.image);
+      }
+      if (String(formData.position).trim() !== "") {
+        fd.append("position", String(parseInt(formData.position, 10)));
       }
       if (editing) {
         await updateHabilidad(id, fd);
@@ -192,6 +211,21 @@ export default function AdminHabilidadForm() {
                   <option key={opt.value} value={opt.value}>{opt.label}</option>
                 ))}
               </select>
+            </div>
+            <div style={{ display: "flex", flexDirection: "column", gap: ".35rem" }}>
+              <label htmlFor="position" className="admin-label">Posición (opcional)</label>
+              <input
+                id="position"
+                className="admin-input"
+                name="position"
+                type="number"
+                min={1}
+                max={editing ? Math.max(1, totalSkills) : Math.max(1, totalSkills + 1)}
+                step={1}
+                placeholder={`Entre 1 y ${editing ? Math.max(1, totalSkills) : Math.max(1, totalSkills + 1)}`}
+                value={formData.position}
+                onChange={handleChange}
+              />
             </div>
             <div className="span-2" style={{ display: "flex", flexDirection: "column", gap: ".35rem", gridColumn: "1 / -1" }}>
               <label htmlFor="image" className="admin-label">Imagen</label>
