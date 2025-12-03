@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
@@ -34,15 +34,18 @@ export const Proyectos = () => {
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
   const { isAdmin } = useAuth();
-  const [isWide, setIsWide] = useState(false);
+  const gridRef = useRef(null);
+  const [colCount, setColCount] = useState(1);
   const renderCard = (p) => (
     <motion.div
       key={p.id}
       className="project-card"
       variants={fadeInUp}
+      initial="initial"
+      animate="animate"
       whileHover={{ y: -10, transition: { duration: 0.2 } }}
     >
-      <motion.div
+      <div
         className="project-image"
         style={{
           backgroundImage: p.imagen
@@ -51,11 +54,10 @@ export const Proyectos = () => {
           backgroundSize: "cover",
           backgroundPosition: "center",
         }}
-        whileHover={{ scale: 1.05, transition: { duration: 0.2 } }}
       />
       <div className="project-header">
         <h3>{p.nombre}</h3>
-        <div className="project-actions">
+        <motion.div className="project-actions">
           {(p.enlaceGithub || p.enlace) && (
             <a
               href={p.enlaceGithub || p.enlace}
@@ -96,7 +98,7 @@ export const Proyectos = () => {
               <i className="fa-solid fa-trash" />
             </button>
           ) : null}
-        </div>
+        </motion.div>
       </div>
       <p>{p.descripcion}</p>
       <div className="project-tech">
@@ -130,15 +132,19 @@ export const Proyectos = () => {
     const floating = [];
 
     for (const it of list) {
-      const pos = typeof it.posicion === 'number' ? it.posicion : null;
-      if (Number.isInteger(pos) && pos >= 1 && pos <= total && !taken.has(pos)) {
+      const pos = typeof it.posicion === "number" ? it.posicion : null;
+      if (
+        Number.isInteger(pos) &&
+        pos >= 1 &&
+        pos <= total &&
+        !taken.has(pos)
+      ) {
         result[pos - 1] = it;
         taken.add(pos);
       } else {
         floating.push(it);
       }
     }
-    // Shuffle floating to mimic habilidades behavior
     for (let i = floating.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
       [floating[i], floating[j]] = [floating[j], floating[i]];
@@ -150,22 +156,43 @@ export const Proyectos = () => {
     return result.filter(Boolean);
   }, []);
 
-  const fetchProyectos = () =>
-    getProyectos()
-      .then((data) => setProjects(applyOrdered(Array.isArray(data) ? data : [])))
-      .catch((err) => console.error("Error cargando proyectos", err))
-      .finally(() => setLoading(false));
+  const fetchProyectos = useCallback(
+    () =>
+      getProyectos()
+        .then((data) =>
+          setProjects(applyOrdered(Array.isArray(data) ? data : []))
+        )
+        .catch((err) => console.error("Error cargando proyectos", err))
+        .finally(() => setLoading(false)),
+    [applyOrdered]
+  );
 
   useEffect(() => {
     fetchProyectos();
-  }, []);
+  }, [fetchProyectos]);
 
   useEffect(() => {
-    const mql = window.matchMedia('(min-width: 900px)');
-    const update = () => setIsWide(mql.matches);
-    update();
-    mql.addEventListener('change', update);
-    return () => mql.removeEventListener('change', update);
+    const el = gridRef.current;
+    if (!el) return;
+    const GAP = 32;
+    const MIN = 300;
+    const calc = () => {
+      const w = el.clientWidth || el.offsetWidth || 0;
+      const cols = Math.max(1, Math.floor((w + GAP) / (MIN + GAP)));
+      setColCount(cols);
+    };
+    let ro = null;
+    if (typeof window !== "undefined" && "ResizeObserver" in window) {
+      ro = new ResizeObserver(calc);
+      ro.observe(el);
+    } else {
+      window.addEventListener("resize", calc);
+    }
+    calc();
+    return () => {
+      if (ro) ro.disconnect();
+      window.removeEventListener("resize", calc);
+    };
   }, []);
 
   const openCreateForm = () => navigate("/admin/proyecto/nuevo");
@@ -196,17 +223,15 @@ export const Proyectos = () => {
       id="proyectos"
       className="projects"
       initial={{ opacity: 0 }}
-      whileInView={{ opacity: 1 }}
-      viewport={{ once: true }}
+      animate={{ opacity: 1 }}
       transition={{ duration: 0.6 }}
     >
       <div className="section-header-wrapper">
         <motion.div
-          variants={fadeInUp}
-          initial="initial"
-          whileInView="animate"
-          viewport={{ once: true }}
           className="section-header section-header--projects"
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
         >
           <motion.h2 className="section-header-title">Mis Proyectos</motion.h2>
           {isAdmin ? (
@@ -221,12 +246,19 @@ export const Proyectos = () => {
           ) : null}
         </motion.div>
       </div>
+
       <motion.div
-        className={`project-grid${projects.length === 1 ? " project-grid--1" : projects.length === 2 ? " project-grid--2" : ""}`}
+        ref={gridRef}
+        className={`project-grid${
+          projects.length === 1
+            ? " project-grid--1"
+            : projects.length === 2
+            ? " project-grid--2"
+            : ""
+        }`}
         variants={staggerContainer}
-        initial="initial"
-        whileInView="animate"
-        viewport={{ once: true }}
+        initial={false}
+        animate="animate"
       >
         {loading && (
           <motion.div variants={fadeInUp} className="project-card">
@@ -243,15 +275,24 @@ export const Proyectos = () => {
 
         {(() => {
           const ordered = projects;
-          const hasSingleLast = isWide && ordered.length >= 4 && (ordered.length % 3 === 1);
-          if (!hasSingleLast) return ordered.map(renderCard);
-          const head = ordered.slice(0, -1);
-          const last = ordered[ordered.length - 1];
+          if (ordered.length <= 2) return ordered.map(renderCard);
+          const cols = Math.max(1, colCount);
+          const rem = ordered.length % cols;
+          if (rem === 0 || cols === 1) return ordered.map(renderCard);
+          const pad = Math.floor((cols - rem) / 2);
+          const head = ordered.slice(0, ordered.length - rem);
+          const tail = ordered.slice(ordered.length - rem);
           return (
             <>
               {head.map(renderCard)}
-              <div className="project-card project-spacer" aria-hidden="true" />
-              {renderCard(last)}
+              {Array.from({ length: pad }).map((_, i) => (
+                <div
+                  key={`sp-${i}`}
+                  className="project-card project-spacer"
+                  aria-hidden="true"
+                />
+              ))}
+              {tail.map(renderCard)}
             </>
           );
         })()}
