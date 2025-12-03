@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API = "http://localhost:8080/api/cv";
+const API = `${import.meta.env.VITE_API_BASE_URL}/api/cv`;
 
 export const uploadCv = async (file) => {
   const form = new FormData();

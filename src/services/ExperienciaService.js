@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = "http://localhost:8080/api/experiencias";
+const API_URL = `${import.meta.env.VITE_API_BASE_URL}/api/experiencias`;
 
 export const getExperiencias = async () => {
   const response = await axios.get(API_URL);

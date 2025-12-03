@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { getProyectos, deleteProyecto } from "../services/ProyectoService";
 import { useAuth } from "../context/AuthContext.jsx";
 
-const BACKEND_BASE_URL = "http://localhost:8080";
+const BACKEND_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 const getProjectImageSrc = (image) => {
   if (!image) return null;

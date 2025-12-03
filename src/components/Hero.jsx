@@ -70,7 +70,7 @@ export const Hero = () => {
               Contáctame
             </motion.a>
             <motion.a
-              href="http://localhost:8080/uploads/cv/cv.pdf"
+              href={`${import.meta.env.VITE_API_BASE_URL}/uploads/cv/cv.pdf`}
               className="cta-primary"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}

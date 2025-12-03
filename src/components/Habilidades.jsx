@@ -19,7 +19,7 @@ const staggerContainer = {
   },
 };
 
-const BACKEND_BASE_URL = "http://localhost:8080";
+const BACKEND_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 const getSkillImageSrc = (image) => {
   if (!image) return "/skills/default.png";
