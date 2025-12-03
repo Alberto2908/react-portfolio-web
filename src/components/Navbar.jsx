@@ -1,8 +1,11 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext.jsx";
 import { logout as apiLogout } from "../services/AuthService";
+import { getVisits } from "../services/VisitsService";
+import { uploadCv } from "../services/CvService";
+import Swal from "sweetalert2";
 
 const fadeInUp = {
   initial: { opacity: 0, y: 20 },
@@ -22,6 +25,23 @@ export const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
   const { isAdmin, refresh } = useAuth();
+  const [visits, setVisits] = useState(null);
+  const fileRef = useRef(null);
+
+  const swal = Swal.mixin({
+    customClass: {
+      popup: "swal-portfolio-popup",
+      title: "swal-portfolio-title",
+      htmlContainer: "swal-portfolio-html",
+      actions: "swal-portfolio-actions",
+      confirmButton: "swal-portfolio-confirm",
+      cancelButton: "swal-portfolio-cancel",
+    },
+    buttonsStyling: false,
+    background: "var(--card-bg)",
+    color: "var(--text-color)",
+    iconColor: "var(--accent-color)",
+  });
 
   const handleLogout = async () => {
     try {
@@ -29,6 +49,48 @@ export const Navbar = () => {
     } finally {
       refresh();
       navigate("/", { replace: true });
+    }
+  };
+
+  useEffect(() => {
+    let active = true;
+    getVisits()
+      .then((data) => {
+        if (active) setVisits(typeof data?.total === "number" ? data.total : null);
+      })
+      .catch(() => {});
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  const triggerUpload = () => {
+    if (fileRef.current) fileRef.current.click();
+  };
+
+  const onFileChange = async (e) => {
+    const file = e.target.files?.[0];
+    e.target.value = ""; // reset for next upload
+    if (!file) return;
+    if (!(file.type === "application/pdf" || file.name.toLowerCase().endsWith(".pdf"))) {
+      await swal.fire({ icon: "error", title: "Selecciona un PDF" });
+      return;
+    }
+    const confirm = await swal.fire({
+      icon: "question",
+      title: "¿Actualizar CV?",
+      text: file.name,
+      showCancelButton: true,
+      confirmButtonText: "Subir",
+      cancelButtonText: "Cancelar",
+    });
+    if (!confirm.isConfirmed) return;
+    try {
+      await uploadCv(file);
+      await swal.fire({ icon: "success", title: "CV actualizado" });
+      // no-op: Hero usa ruta fija /uploads/cv/cv.pdf
+    } catch {
+      await swal.fire({ icon: "error", title: "No se pudo subir el CV" });
     }
   };
 
@@ -75,6 +137,37 @@ export const Navbar = () => {
           >
             Cerrar sesión
           </button>
+        ) : null}
+        {isAdmin ? (
+          <span style={{ color: "var(--light-text)", fontSize: ".9rem" }} title="Visitas totales">
+            {visits === null ? "…" : `Visitas: ${visits}`}
+          </span>
+        ) : null}
+        {isAdmin ? (
+          <>
+            <input
+              ref={fileRef}
+              type="file"
+              accept="application/pdf"
+              onChange={onFileChange}
+              style={{ display: "none" }}
+            />
+            <button
+              onClick={triggerUpload}
+              className="nav-upload-btn"
+              aria-label="Actualizar CV"
+              style={{
+                border: "1px solid var(--card-border)",
+                background: "transparent",
+                color: "var(--text-color)",
+                borderRadius: 10,
+                padding: "6px 10px",
+                fontSize: ".9rem",
+              }}
+            >
+              Actualizar CV
+            </button>
+          </>
         ) : null}
       </motion.div>
 

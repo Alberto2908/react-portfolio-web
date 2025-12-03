@@ -67,6 +67,17 @@ export const Hero = () => {
             >
               Contáctame
             </motion.a>
+            <motion.a
+              href="http://localhost:8080/uploads/cv/cv.pdf"
+              className="cta-primary"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              download
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Descarga mi CV
+            </motion.a>
           </motion.div>
           <motion.div className="social-links" variants={staggerContainer}>
             <motion.a href="https://github.com/Alberto2908/" target="_blank">
