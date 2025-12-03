@@ -15,10 +15,8 @@ function App() {
   const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
-    // defer to next frame to avoid synchronous setState warning
     const id = requestAnimationFrame(() => setIsLoaded(true));
     emailjs.init(import.meta.env.VITE_EMAILJS_PUBLIC_KEY);
-    // increment visit counter (non-blocking) with StrictMode guard
     const VISIT_FLAG = '__VISIT_INCREMENTED__';
     if (!window[VISIT_FLAG]) {
       window[VISIT_FLAG] = true;
