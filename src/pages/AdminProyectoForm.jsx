@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { motion } from "framer-motion";
 import Swal from "sweetalert2";
-import { createProyecto, getProyectoById, updateProyecto } from "../services/ProyectoService";
+import { createProyecto, getProyectoById, updateProyecto, getProyectos } from "../services/ProyectoService";
 
 const fadeInUp = {
   initial: { opacity: 0, y: 20 },
@@ -24,12 +24,14 @@ export default function AdminProyectoForm() {
   const { id } = useParams();
   const editing = Boolean(id);
   const [loading, setLoading] = useState(!!id);
+  const [totalProjects, setTotalProjects] = useState(0);
   const [formData, setFormData] = useState({
     nombre: "",
     descripcion: "",
     enlaceGithub: "",
     enlaceDespliegue: "",
     tecnologiasText: "",
+    posicion: "",
     imagen: null, // File | null
   });
   const [currentImage, setCurrentImage] = useState("");
@@ -47,12 +49,20 @@ export default function AdminProyectoForm() {
           enlaceGithub: p.enlaceGithub || p.enlace || "",
           enlaceDespliegue: p.enlaceDespliegue || "",
           tecnologiasText: (p.tecnologias || []).join(", "),
+          posicion: Number.isInteger(p.posicion) ? String(p.posicion) : "",
           imagen: null,
         }));
         setCurrentImage(p.imagen || "");
       })
       .finally(() => setLoading(false));
   }, [id]);
+
+  useEffect(() => {
+    // contar proyectos para calcular el rango permitido de posición
+    getProyectos()
+      .then((list) => setTotalProjects(Array.isArray(list) ? list.length : 0))
+      .catch(() => setTotalProjects(0));
+  }, []);
 
   const swal = Swal.mixin({
     customClass: {
@@ -125,6 +135,10 @@ export default function AdminProyectoForm() {
         fd.append("enlaceDespliegue", formData.enlaceDespliegue.trim());
       }
       tecnologiasArray.forEach((t) => fd.append("tecnologias", t));
+      const posNum = parseInt(formData.posicion, 10);
+      if (!Number.isNaN(posNum) && posNum > 0) {
+        fd.append("posicion", String(posNum));
+      }
       if (formData.imagen) fd.append("imagen", formData.imagen);
 
       if (editing) {
@@ -198,6 +212,22 @@ export default function AdminProyectoForm() {
                 name="tecnologiasText"
                 placeholder="Tecnologías (entre 1 y 3, separadas por coma)"
                 value={formData.tecnologiasText}
+                onChange={handleChange}
+              />
+            </div>
+
+            <div style={{ display: "flex", flexDirection: "column", gap: ".35rem" }}>
+              <label htmlFor="posicion" className="admin-label">Posición (opcional)</label>
+              <input
+                id="posicion"
+                className="admin-input"
+                name="posicion"
+                type="number"
+                min={1}
+                max={editing ? Math.max(1, totalProjects) : Math.max(1, totalProjects + 1)}
+                step={1}
+                placeholder={`Entre 1 y ${editing ? Math.max(1, totalProjects) : Math.max(1, totalProjects + 1)}`}
+                value={formData.posicion}
                 onChange={handleChange}
               />
             </div>

@@ -73,7 +73,7 @@ export const Habilidades = () => {
     const floating = [];
 
     for (const sk of list) {
-      const pos = typeof sk.position === 'number' ? sk.position : null;
+      const pos = typeof sk.posicion === 'number' ? sk.posicion : null;
       if (Number.isInteger(pos) && pos >= 1 && pos <= total && !taken.has(pos)) {
         result[pos - 1] = sk;
         taken.add(pos);
