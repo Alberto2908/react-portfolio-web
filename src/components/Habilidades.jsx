@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
 import { getHabilidades, deleteHabilidad } from "../services/HabilidadService";
+import { useAuth } from "../context/AuthContext.jsx";
 
 const fadeInUp = {
   initial: { opacity: 0, y: 20 },
@@ -47,6 +48,7 @@ export const Habilidades = () => {
   const [skills, setSkills] = useState([]);
   const [loading, setLoading] = useState(true);
   const [dynamicColors, setDynamicColors] = useState({});
+  const { isAdmin } = useAuth();
 
   const swal = Swal.mixin({
     customClass: {
@@ -201,6 +203,7 @@ export const Habilidades = () => {
           className="section-header section-header--skills"
         >
           <motion.h2 className="section-header-title">Habilidades Técnicas</motion.h2>
+          {isAdmin ? (
           <button
             onClick={openCreateForm}
             aria-label="Añadir habilidad"
@@ -209,6 +212,7 @@ export const Habilidades = () => {
           >
             <span className="xp-plus">+</span>
           </button>
+          ) : null}
         </motion.div>
       </div>
 
@@ -259,6 +263,7 @@ export const Habilidades = () => {
             <div className="stack-pill">
               <div className="stack-item-name">{skill.name}</div>
             </div>
+            {isAdmin ? (
             <div className="stack-actions">
               <button
                 aria-label="Editar"
@@ -277,6 +282,7 @@ export const Habilidades = () => {
                 <i className="fa-solid fa-trash" />
               </button>
             </div>
+            ) : null}
           </motion.div>
         );
         })}

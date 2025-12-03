@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
 import { getFormaciones, deleteFormacion } from "../services/FormacionService";
+import { useAuth } from "../context/AuthContext.jsx";
 
 const fadeInUp = {
   initial: { opacity: 0, y: 20 },
@@ -74,6 +75,7 @@ export const Formacion = () => {
   const navigate = useNavigate();
   const [studies, setStudies] = useState([]);
   const [loading, setLoading] = useState(true);
+  const { isAdmin } = useAuth();
 
   const swal = Swal.mixin({
     customClass: {
@@ -146,6 +148,7 @@ export const Formacion = () => {
           className="section-header section-header--education"
         >
           <motion.h2 className="section-header-title">Formación Académica</motion.h2>
+          {isAdmin ? (
           <button
             aria-label="Añadir formación"
             title="Añadir formación"
@@ -154,6 +157,7 @@ export const Formacion = () => {
           >
             <span className="xp-plus">+</span>
           </button>
+          ) : null}
         </motion.div>
       </div>
 
@@ -184,6 +188,7 @@ export const Formacion = () => {
                   <h3>{study.nombre}</h3>
                   <div className="row-with-actions">
                     <button
+                      style={{ display: isAdmin ? undefined : 'none' }}
                       aria-label="Editar"
                       onClick={() => openEditForm(study)}
                       className="project-action-btn project-action-btn--edit"
@@ -191,6 +196,7 @@ export const Formacion = () => {
                       <i className="fa-solid fa-pen" />
                     </button>
                     <button
+                      style={{ display: isAdmin ? undefined : 'none' }}
                       aria-label="Borrar"
                       onClick={() => handleDelete(study)}
                       className="project-action-btn project-action-btn--delete"

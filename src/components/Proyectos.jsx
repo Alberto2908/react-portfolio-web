@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
 import { getProyectos, deleteProyecto } from "../services/ProyectoService";
+import { useAuth } from "../context/AuthContext.jsx";
 
 const BACKEND_BASE_URL = "http://localhost:8080";
 
@@ -32,6 +33,7 @@ export const Proyectos = () => {
   const navigate = useNavigate();
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
+  const { isAdmin } = useAuth();
 
   const swal = Swal.mixin({
     customClass: {
@@ -99,6 +101,7 @@ export const Proyectos = () => {
           className="section-header section-header--projects"
         >
           <motion.h2 className="section-header-title">Mis Proyectos</motion.h2>
+          {isAdmin ? (
           <button
             aria-label="Añadir proyecto"
             title="Añadir proyecto"
@@ -107,6 +110,7 @@ export const Proyectos = () => {
           >
             <span className="xp-plus">+</span>
           </button>
+          ) : null}
         </motion.div>
       </div>
       <motion.div
@@ -172,6 +176,7 @@ export const Proyectos = () => {
                     <i className="fa-solid fa-arrow-up-right-from-square" />
                   </a>
                 )}
+                {isAdmin ? (
                 <button
                   aria-label="Editar"
                   onClick={() => openEditForm(p)}
@@ -179,6 +184,8 @@ export const Proyectos = () => {
                 >
                   <i className="fa-solid fa-pen" />
                 </button>
+                ) : null}
+                {isAdmin ? (
                 <button
                   aria-label="Borrar"
                   onClick={() => handleDelete(p)}
@@ -186,6 +193,7 @@ export const Proyectos = () => {
                 >
                   <i className="fa-solid fa-trash" />
                 </button>
+                ) : null}
               </div>
             </div>
 

@@ -1,5 +1,8 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext.jsx";
+import { logout as apiLogout } from "../services/AuthService";
 
 const fadeInUp = {
   initial: { opacity: 0, y: 20 },
@@ -17,6 +20,17 @@ const staggerContainer = {
 
 export const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const navigate = useNavigate();
+  const { isAdmin, refresh } = useAuth();
+
+  const handleLogout = async () => {
+    try {
+      await apiLogout();
+    } finally {
+      refresh();
+      navigate("/", { replace: true });
+    }
+  };
 
   const links = [
     { href: "#home", label: "Home" },
@@ -42,8 +56,26 @@ export const Navbar = () => {
         className="logo"
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
+        style={{ display: "flex", alignItems: "center", gap: ".75rem" }}
       >
-        Portfolio
+        <span>Portfolio</span>
+        {isAdmin ? (
+          <button
+            onClick={handleLogout}
+            className="nav-logout-btn"
+            aria-label="Cerrar sesión"
+            style={{
+              border: "1px solid var(--card-border)",
+              background: "transparent",
+              color: "var(--text-color)",
+              borderRadius: 10,
+              padding: "6px 10px",
+              fontSize: ".9rem",
+            }}
+          >
+            Cerrar sesión
+          </button>
+        ) : null}
       </motion.div>
 
       <motion.ul

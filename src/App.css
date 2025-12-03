@@ -1351,6 +1351,21 @@ html { scroll-behavior: smooth; scroll-padding-top: var(--nav-offset); }
   border-top: 1px solid var(--card-border);
 }
 
+/* Hide any hover/pointer hint on the © clickable span */
+.footer span {
+  cursor: default !important;
+}
+.footer span:hover {
+  color: inherit !important;
+  text-decoration: none !important;
+}
+/* Ensure no parent hover affects the © span */
+.footer p { cursor: default !important; }
+.footer p:hover span {
+  color: var(--text-color) !important;
+  text-decoration: none !important;
+}
+
 /* SweetAlert2 */
 .swal-portfolio-popup {
   background: var(--card-bg) !important;

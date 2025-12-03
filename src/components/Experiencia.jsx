@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
 import { getExperiencias, deleteExperiencia } from "../services/ExperienciaService";
+import { useAuth } from "../context/AuthContext.jsx";
 
 const fadeInUp = {
   initial: { opacity: 0, y: 20 },
@@ -89,6 +90,7 @@ export const Experiencia = () => {
   const navigate = useNavigate();
   const [experiences, setExperiences] = useState([]);
   const [loading, setLoading] = useState(true);
+  const { isAdmin } = useAuth();
 
   const swal = Swal.mixin({
     customClass: {
@@ -165,6 +167,7 @@ export const Experiencia = () => {
           className="section-header section-header--experience"
         >
           <motion.h2 className="section-header-title">Experiencia Laboral</motion.h2>
+          {isAdmin ? (
           <button
             aria-label="Añadir experiencia"
             title="Añadir experiencia"
@@ -173,6 +176,7 @@ export const Experiencia = () => {
           >
             <span className="xp-plus">+</span>
           </button>
+          ) : null}
         </motion.div>
       </div>
 
@@ -206,6 +210,7 @@ export const Experiencia = () => {
                   >
                     {exp.trabajoActivo ? "En activo" : "Finalizado"}
                   </span>
+                  {isAdmin ? (
                   <button
                     aria-label="Editar"
                     onClick={() => openEditForm(exp)}
@@ -213,6 +218,8 @@ export const Experiencia = () => {
                   >
                     <i className="fa-solid fa-pen" />
                   </button>
+                  ) : null}
+                  {isAdmin ? (
                   <button
                     aria-label="Borrar"
                     onClick={() => handleDelete(exp)}
@@ -220,6 +227,7 @@ export const Experiencia = () => {
                   >
                     <i className="fa-solid fa-trash" />
                   </button>
+                  ) : null}
                 </div>
               </div>
               <span className="experience-company">{exp.empresa}</span>
