@@ -17,6 +17,7 @@ const staggerContainer = {
 };
 
 export const Hero = () => {
+  const BACKEND_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:8080";
   return (
     <motion.section
       id="home"
@@ -70,7 +71,7 @@ export const Hero = () => {
               Contáctame
             </motion.a>
             <motion.a
-              href={`${import.meta.env.VITE_API_BASE_URL}/uploads/cv/cv.pdf`}
+              href={`${BACKEND_BASE_URL}/uploads/cv/cv.pdf`}
               className="cta-primary"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
