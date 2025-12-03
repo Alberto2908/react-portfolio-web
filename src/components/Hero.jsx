@@ -32,8 +32,10 @@ export const Hero = () => {
           initial="initial"
           animate="animate"
         >
-          <motion.div className="hero-badge">
-            <span> 👋 Hola, soy </span>
+          <motion.div className="hero-intro" variants={fadeInUp}>
+            <span className="intro-icon" aria-hidden="true">👋</span>
+            <span className="intro-text">Hola, soy</span>
+            <span className="intro-caret" aria-hidden="true"></span>
           </motion.div>
           <motion.h1
             className="glitch"
