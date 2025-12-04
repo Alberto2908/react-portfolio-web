@@ -17,19 +17,37 @@ const BACKEND_BASE_URL = (() => {
 const getProjectImageSrc = (image) => {
   if (!image) return null;
   const base = BACKEND_BASE_URL.replace(/\/+$/, "");
-  if (/^https?:\/\//i.test(image)) return image;
-  // Normalizar ruta: quitar barras iniciales, convertir \\ -> /
+  if (/^https?:\/\//i.test(image)) return encodeURI(image);
   let path = String(image).trim().replace(/\\/g, "/").replace(/^\.?\/+/, "");
-  // Si ya viene como '/uploads/...'
   if (path.startsWith("uploads/")) {
     return encodeURI(`${base}/${path}`);
   }
-  // Si viene como 'proyectos/...'
   if (path.startsWith("proyectos/")) {
     return encodeURI(`${base}/uploads/${path}`);
   }
-  // Nombre de archivo suelto u otra variante relativa
   return encodeURI(`${base}/uploads/proyectos/${path}`);
+};
+
+const handleProjectImgError = (e) => {
+  const img = e.currentTarget;
+  try {
+    if (!img.dataset.retry) {
+      const url = new URL(img.src);
+      const parts = url.pathname.split("/");
+      const fname = parts.pop() || "";
+      const lower = fname.toLowerCase();
+      if (lower && lower !== fname) {
+        parts.push(lower);
+        url.pathname = parts.join("/");
+        img.dataset.retry = "1";
+        img.src = url.toString();
+        return;
+      }
+    }
+  } catch {
+    void 0;
+  }
+  img.style.display = "none";
 };
 
 const fadeInUp = {
@@ -65,13 +83,28 @@ export const Proyectos = () => {
       <div
         className="project-image"
         style={{
-          backgroundImage: p.imagen
-            ? `url("${getProjectImageSrc(p.imagen)}")`
-            : "linear-gradient(135deg, var(--gradient-start), var(--gradient-end))",
+          backgroundImage: "linear-gradient(135deg, var(--gradient-start), var(--gradient-end))",
           backgroundSize: "cover",
           backgroundPosition: "center",
+          position: "relative",
+          overflow: "hidden",
         }}
-      />
+      >
+        {p.imagen && (
+          <img
+            src={getProjectImageSrc(p.imagen)}
+            alt={p.nombre}
+            onError={handleProjectImgError}
+            style={{
+              position: "absolute",
+              inset: 0,
+              width: "100%",
+              height: "100%",
+              objectFit: "cover",
+            }}
+          />
+        )}
+      </div>
       <div className="project-header">
         <h3>{p.nombre}</h3>
         <motion.div className="project-actions">
