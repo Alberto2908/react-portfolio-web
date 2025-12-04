@@ -264,6 +264,7 @@ export const Habilidades = () => {
               <img
                 src={getSkillImageSrc(skill.image)}
                 alt={skill.name}
+                crossOrigin="anonymous"
                 onError={handleSkillImageError}
                 onLoad={(e) => handleImgLoadColor(e, skill.id)}
               />
