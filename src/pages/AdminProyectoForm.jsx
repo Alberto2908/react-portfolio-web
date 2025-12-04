@@ -10,13 +10,16 @@ const fadeInUp = {
   transition: { duration: 0.6 },
 };
 
-const BACKEND_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+const BACKEND_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:8080";
 
 const getImageSrc = (image) => {
   if (!image) return "";
-  if (image.startsWith("http")) return image;
-  if (image.startsWith("/uploads")) return `${BACKEND_BASE_URL}${image}`;
-  return image;
+  const base = BACKEND_BASE_URL.replace(/\/+$/, "");
+  if (/^https?:\/\//i.test(image)) return image;
+  let path = String(image).trim().replace(/\\/g, "/").replace(/^\.?\/+/, "");
+  if (path.startsWith("uploads/")) return `${base}/${path}`;
+  if (path.startsWith("proyectos/")) return `${base}/uploads/${path}`;
+  return `${base}/uploads/proyectos/${path}`;
 };
 
 export default function AdminProyectoForm() {

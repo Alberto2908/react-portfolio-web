@@ -19,14 +19,16 @@ const staggerContainer = {
   },
 };
 
-const BACKEND_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+const BACKEND_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:8080";
 
 const getSkillImageSrc = (image) => {
   if (!image) return "/skills/default.png";
-  if (image.startsWith("http")) return image;
-  if (image.startsWith("/uploads")) return `${BACKEND_BASE_URL}${image}`;
-  const file = image.replace(/^habilidades\//, "");
-  return `${BACKEND_BASE_URL}/uploads/habilidades/${file}`;
+  const base = BACKEND_BASE_URL.replace(/\/+$/, "");
+  if (/^https?:\/\//i.test(image)) return image;
+  let path = String(image).trim().replace(/\\/g, "/").replace(/^\.?\/+/, "");
+  if (path.startsWith("uploads/")) return `${base}/${path}`;
+  if (path.startsWith("habilidades/")) return `${base}/uploads/${path}`;
+  return `${base}/uploads/habilidades/${path}`;
 };
 
 const handleSkillImageError = (event) => {

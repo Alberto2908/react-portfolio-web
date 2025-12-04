@@ -1,6 +1,7 @@
 import axios from "axios";
 
-const API_URL = `${import.meta.env.VITE_API_BASE_URL}/api/formaciones`;
+const API_BASE = import.meta.env.VITE_API_BASE_URL || "http://localhost:8080";
+const API_URL = `${API_BASE}/api/formaciones`;
 
 export const getFormaciones = async () => {
   const response = await axios.get(API_URL);
