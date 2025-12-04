@@ -15,11 +15,11 @@ const BACKEND_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:
 const getImageSrc = (image) => {
   if (!image) return "";
   const base = BACKEND_BASE_URL.replace(/\/+$/, "");
-  if (/^https?:\/\//i.test(image)) return image;
+  if (/^https?:\/\//i.test(image)) return encodeURI(image);
   let path = String(image).trim().replace(/\\/g, "/").replace(/^\.?\/+/, "");
-  if (path.startsWith("uploads/")) return `${base}/${path}`;
-  if (path.startsWith("proyectos/")) return `${base}/uploads/${path}`;
-  return `${base}/uploads/proyectos/${path}`;
+  if (path.startsWith("uploads/")) return encodeURI(`${base}/${path}`);
+  if (path.startsWith("proyectos/")) return encodeURI(`${base}/uploads/${path}`);
+  return encodeURI(`${base}/uploads/proyectos/${path}`);
 };
 
 export default function AdminProyectoForm() {

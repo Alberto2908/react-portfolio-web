@@ -22,14 +22,14 @@ const getProjectImageSrc = (image) => {
   let path = String(image).trim().replace(/\\/g, "/").replace(/^\.?\/+/, "");
   // Si ya viene como '/uploads/...'
   if (path.startsWith("uploads/")) {
-    return `${base}/${path}`;
+    return encodeURI(`${base}/${path}`);
   }
   // Si viene como 'proyectos/...'
   if (path.startsWith("proyectos/")) {
-    return `${base}/uploads/${path}`;
+    return encodeURI(`${base}/uploads/${path}`);
   }
   // Nombre de archivo suelto u otra variante relativa
-  return `${base}/uploads/proyectos/${path}`;
+  return encodeURI(`${base}/uploads/proyectos/${path}`);
 };
 
 const fadeInUp = {
@@ -66,7 +66,7 @@ export const Proyectos = () => {
         className="project-image"
         style={{
           backgroundImage: p.imagen
-            ? `url(${getProjectImageSrc(p.imagen)})`
+            ? `url("${getProjectImageSrc(p.imagen)}")`
             : "linear-gradient(135deg, var(--gradient-start), var(--gradient-end))",
           backgroundSize: "cover",
           backgroundPosition: "center",

@@ -31,11 +31,11 @@ const BACKEND_BASE_URL = (() => {
 const getSkillImageSrc = (image) => {
   if (!image) return "/skills/default.png";
   const base = BACKEND_BASE_URL.replace(/\/+$/, "");
-  if (/^https?:\/\//i.test(image)) return image;
+  if (/^https?:\/\//i.test(image)) return encodeURI(image);
   let path = String(image).trim().replace(/\\/g, "/").replace(/^\.?\/+/, "");
-  if (path.startsWith("uploads/")) return `${base}/${path}`;
-  if (path.startsWith("habilidades/")) return `${base}/uploads/${path}`;
-  return `${base}/uploads/habilidades/${path}`;
+  if (path.startsWith("uploads/")) return encodeURI(`${base}/${path}`);
+  if (path.startsWith("habilidades/")) return encodeURI(`${base}/uploads/${path}`);
+  return encodeURI(`${base}/uploads/habilidades/${path}`);
 };
 
 const handleSkillImageError = (event) => {
