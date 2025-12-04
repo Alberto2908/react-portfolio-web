@@ -9,10 +9,20 @@ const BACKEND_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:
 
 const getProjectImageSrc = (image) => {
   if (!image) return null;
-  if (image.startsWith("http")) return image;
-  if (image.startsWith("/uploads")) return `${BACKEND_BASE_URL}${image}`;
-  const file = image.replace(/^proyectos\//, "");
-  return `${BACKEND_BASE_URL}/uploads/proyectos/${file}`;
+  const base = BACKEND_BASE_URL.replace(/\/+$/, "");
+  if (/^https?:\/\//i.test(image)) return image;
+  // Normalizar ruta: quitar barras iniciales, convertir \\ -> /
+  let path = String(image).trim().replace(/\\/g, "/").replace(/^\.?\/+/, "");
+  // Si ya viene como '/uploads/...'
+  if (path.startsWith("uploads/")) {
+    return `${base}/${path}`;
+  }
+  // Si viene como 'proyectos/...'
+  if (path.startsWith("proyectos/")) {
+    return `${base}/uploads/${path}`;
+  }
+  // Nombre de archivo suelto u otra variante relativa
+  return `${base}/uploads/proyectos/${path}`;
 };
 
 const fadeInUp = {
