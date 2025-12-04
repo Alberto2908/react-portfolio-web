@@ -5,7 +5,14 @@ import { useNavigate } from "react-router-dom";
 import { getProyectos, deleteProyecto } from "../services/ProyectoService";
 import { useAuth } from "../context/AuthContext.jsx";
 
-const BACKEND_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:8080";
+const BACKEND_BASE_URL = (() => {
+  const v = import.meta.env.VITE_API_BASE_URL;
+  if (v && String(v).trim()) return v;
+  if (typeof window !== "undefined" && window.location?.protocol === "https:") {
+    return "https://portfolio-alberto-backend.onrender.com";
+  }
+  return "http://localhost:8080";
+})();
 
 const getProjectImageSrc = (image) => {
   if (!image) return null;

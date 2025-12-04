@@ -19,7 +19,14 @@ const staggerContainer = {
   },
 };
 
-const BACKEND_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:8080";
+const BACKEND_BASE_URL = (() => {
+  const v = import.meta.env.VITE_API_BASE_URL;
+  if (v && String(v).trim()) return v;
+  if (typeof window !== "undefined" && window.location?.protocol === "https:") {
+    return "https://portfolio-alberto-backend.onrender.com";
+  }
+  return "http://localhost:8080";
+})();
 
 const getSkillImageSrc = (image) => {
   if (!image) return "/skills/default.png";
@@ -259,7 +266,6 @@ export const Habilidades = () => {
                 alt={skill.name}
                 onError={handleSkillImageError}
                 onLoad={(e) => handleImgLoadColor(e, skill.id)}
-                crossOrigin="anonymous"
               />
             </div>
             <div className="stack-pill">
