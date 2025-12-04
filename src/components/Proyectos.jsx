@@ -28,6 +28,14 @@ const getProjectImageSrc = (image) => {
   return encodeURI(`${base}/uploads/proyectos/${path}`);
 };
 
+const getProjectImageValue = (p) => {
+  const candidates = [p?.imagen, p?.image, p?.imagenUrl, p?.img, p?.imagenPath, p?.imagePath];
+  for (const c of candidates) {
+    if (typeof c === "string" && c.trim().length > 0) return c.trim();
+  }
+  return null;
+};
+
 const handleProjectImgError = (e) => {
   const img = e.currentTarget;
   try {
@@ -80,31 +88,37 @@ export const Proyectos = () => {
       animate="animate"
       whileHover={{ y: -10, transition: { duration: 0.2 } }}
     >
-      <div
-        className="project-image"
-        style={{
-          backgroundImage: "linear-gradient(135deg, var(--gradient-start), var(--gradient-end))",
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-          position: "relative",
-          overflow: "hidden",
-        }}
-      >
-        {p.imagen && (
-          <img
-            src={getProjectImageSrc(p.imagen)}
-            alt={p.nombre}
-            onError={handleProjectImgError}
+      {(() => {
+        const value = getProjectImageValue(p);
+        const src = value ? getProjectImageSrc(value) : null;
+        return (
+          <div
+            className="project-image"
             style={{
-              position: "absolute",
-              inset: 0,
-              width: "100%",
-              height: "100%",
-              objectFit: "cover",
+              backgroundImage: "linear-gradient(135deg, var(--gradient-start), var(--gradient-end))",
+              backgroundSize: "cover",
+              backgroundPosition: "center",
+              position: "relative",
+              overflow: "hidden",
             }}
-          />
-        )}
-      </div>
+          >
+            {src ? (
+              <img
+                src={src}
+                alt={p.nombre}
+                onError={handleProjectImgError}
+                style={{
+                  position: "absolute",
+                  inset: 0,
+                  width: "100%",
+                  height: "100%",
+                  objectFit: "cover",
+                }}
+              />
+            ) : null}
+          </div>
+        );
+      })()}
       <div className="project-header">
         <h3>{p.nombre}</h3>
         <motion.div className="project-actions">
