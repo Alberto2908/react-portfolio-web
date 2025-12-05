@@ -26,19 +26,9 @@ const getProjectImageSrc = (image) => {
   // filename suelto
   return `${base}/uploads/proyectos/${path}`;
 };
-const getLocalFallbackSrc = (image) => {
-  if (!image) return null;
-  const raw = String(image).trim().replace(/\\/g, "/");
-  const parts = raw.split("/");
-  const fname = (parts.pop() || "").toLowerCase();
-  const base = (import.meta?.env?.BASE_URL || "/").replace(/\/$/, "");
-  return `${base}/proyectos/${fname}`;
-};
+ 
 
-const getPlaceholderSrc = () => {
-  const base = (import.meta?.env?.BASE_URL || "/").replace(/\/$/, "");
-  return `${base}/proyectos/placeholder.svg`;
-};
+// placeholder eliminado a petición: no mostrar imagen de relleno
 const getProjectImageValue = (p) => {
   const candidates = [p?.imagen, p?.image, p?.imagenUrl, p?.img, p?.imagenPath, p?.imagePath];
   for (const c of candidates) {
@@ -68,16 +58,8 @@ const handleProjectImgError = (e) => {
   } catch {
     void 0;
   }
-  if (!img.dataset.fallbackTried && img.dataset.fallback) {
-    img.dataset.fallbackTried = "1";
-    img.src = img.dataset.fallback;
-    return;
-  }
-  if (!img.dataset.placeholderTried && img.dataset.placeholder) {
-    img.dataset.placeholderTried = "1";
-    img.src = img.dataset.placeholder;
-    return;
-  }
+  
+  // sin placeholder
   img.style.display = "none";
 };
 
@@ -130,8 +112,6 @@ export const Proyectos = () => {
                 src={src}
                 alt={p.nombre}
                 onError={handleProjectImgError}
-                data-fallback={getLocalFallbackSrc(value)}
-                data-placeholder={getPlaceholderSrc()}
                 style={{
                   position: "absolute",
                   inset: 0,
