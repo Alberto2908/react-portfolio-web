@@ -35,7 +35,7 @@ export const Footer = () => {
         <span onClick={handleCopyClick}>
           &copy;
         </span>
-        {" "}2025 Alberto Cabello Lasheras - Full Stack Developer
+        {" "}{new Date().getFullYear()} Alberto Cabello Lasheras - Full Stack Developer
       </p>
     </motion.footer>
   );
