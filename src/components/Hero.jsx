@@ -71,7 +71,7 @@ export const Hero = () => {
               Contáctame
             </motion.a>
             <motion.a
-              href={`${BACKEND_BASE_URL}/api/cv/download`}
+              href={`${BACKEND_BASE_URL}/uploads/cv/cv.pdf`}
               className="cta-primary"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
