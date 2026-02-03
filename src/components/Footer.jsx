@@ -6,6 +6,7 @@ export const Footer = () => {
   const navigate = useNavigate();
   const countRef = useRef(0);
   const tRef = useRef(null);
+  const year = new Date().getFullYear();
 
   const handleCopyClick = () => {
     if (tRef.current) clearTimeout(tRef.current);
@@ -35,7 +36,7 @@ export const Footer = () => {
         <span onClick={handleCopyClick}>
           &copy;
         </span>
-        {" "}2025 Alberto Cabello Lasheras - Full Stack Developer
+        {" "}{year} Alberto Cabello Lasheras - Full Stack Developer
       </p>
     </motion.footer>
   );
