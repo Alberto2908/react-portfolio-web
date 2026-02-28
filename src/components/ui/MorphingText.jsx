@@ -89,10 +89,33 @@ const useMorphingText = (texts) => {
 const Texts = ({ texts }) => {
   const { text1Ref, text2Ref } = useMorphingText(texts);
   return (
-    <>
-      <span className="absolute left-0 top-0 w-full" ref={text1Ref} />
-      <span className="absolute left-0 top-0 w-full" ref={text2Ref} />
-    </>
+    <div
+      className="relative w-full"
+      style={{ height: "1em", lineHeight: "1.2" }}
+    >
+      <span
+        className="absolute top-0 left-1/2 -translate-x-1/2 w-full"
+        style={{
+          lineHeight: "1.2",
+          whiteSpace: "nowrap",
+          overflow: "hidden",
+          textOverflow: "ellipsis",
+          textAlign: "inherit",
+        }}
+        ref={text1Ref}
+      />
+      <span
+        className="absolute top-0 left-1/2 -translate-x-1/2 w-full"
+        style={{
+          lineHeight: "1.2",
+          whiteSpace: "nowrap",
+          overflow: "hidden",
+          textOverflow: "ellipsis",
+          textAlign: "inherit",
+        }}
+        ref={text2Ref}
+      />
+    </div>
   );
 };
 
@@ -121,9 +144,7 @@ export const MorphingText = ({ texts, className }) => (
   <div
     className={cn("relative [filter:url(#threshold)_blur(0.6px)]", className)}
   >
-    <div className="relative" style={{ height: "2.4rem" }}>
-      <Texts texts={texts} />
-    </div>
+    <Texts texts={texts} />
     <SvgFilters />
   </div>
 );
