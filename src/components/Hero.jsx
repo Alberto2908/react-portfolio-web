@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { vscDarkPlus } from "react-syntax-highlighter/dist/esm/styles/prism";
+import { MorphingText } from "./ui/MorphingText";
 
 const fadeInUp = {
   initial: { opacity: 0, y: 20 },
@@ -17,9 +18,12 @@ const staggerContainer = {
 };
 
 export const Hero = () => {
-  const BACKEND_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:8080";
+  const BACKEND_BASE_URL =
+    import.meta.env.VITE_API_BASE_URL || "http://localhost:8080";
   const API_BASE = BACKEND_BASE_URL.replace(/\/$/, "");
-  const CV_URL = API_BASE.endsWith("/api") ? `${API_BASE}/cv/view` : `${API_BASE}/api/cv/view`;
+  const CV_URL = API_BASE.endsWith("/api")
+    ? `${API_BASE}/cv/view`
+    : `${API_BASE}/api/cv/view`;
   return (
     <motion.section
       id="home"
@@ -36,7 +40,9 @@ export const Hero = () => {
           animate="animate"
         >
           <motion.div className="hero-intro" variants={fadeInUp}>
-            <span className="intro-icon" aria-hidden="true">👋</span>
+            <span className="intro-icon" aria-hidden="true">
+              👋
+            </span>
             <span className="intro-text">Hola, soy</span>
             <span className="intro-caret" aria-hidden="true"></span>
           </motion.div>
@@ -47,9 +53,15 @@ export const Hero = () => {
           >
             Alberto Cabello Lasheras
           </motion.h1>
-          <motion.h2 className="hero-subtitle" variants={fadeInUp}>
-            Full Stack Developer
-          </motion.h2>
+          <MorphingText
+            className="hero-subtitle"
+            variants={fadeInUp}
+            texts={[
+              "FullStack Developer",
+              "Backend Developer",
+              "Frontend Developer",
+            ]}
+          />
           <motion.p className="hero-description" variants={fadeInUp}>
             Creo experiencias digitales que combinan un diseño llamativo con una
             funcionalidad potente. Me especializo en aplicaciones web modernas e
